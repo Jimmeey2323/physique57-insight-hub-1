@@ -11,7 +11,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { NewClientFilterOptions } from '@/types/dashboard';
 import { ModernHeroSection } from '@/components/ui/ModernHeroSection';
 import { formatNumber } from '@/utils/formatters';
-import { getPreviousMonthDateRange, parseDate } from '@/utils/dateUtils';
+import { getPreviousMonthDateRange, getCurrentMonthDateRange, parseDate } from '@/utils/dateUtils';
 import { cn } from '@/lib/utils';
 
 // Import new components for rebuilt client conversion tab
@@ -100,27 +100,43 @@ const ClientRetention = () => {
     console.log('Filtering data. Total records:', data.length, 'Selected location:', selectedLocation);
     let filtered = data;
 
-    // Apply date range filter FIRST
-    if (filters.dateRange.start || filters.dateRange.end) {
+    // TEMPORARY: Show sample of raw data for debugging
+    if (data.length > 0) {
+      console.log('Sample client data for debugging:', {
+        firstFewClients: data.slice(0, 3),
+        dateFormats: data.slice(0, 10).map(c => c.firstVisitDate),
+        dateRange: filters.dateRange
+      });
+    }
+
+    // Apply date range filter FIRST - but make it more lenient for debugging
+    if (filters.dateRange.start && filters.dateRange.end) {
       const startDate = filters.dateRange.start ? new Date(filters.dateRange.start + 'T00:00:00') : null;
       const endDate = filters.dateRange.end ? new Date(filters.dateRange.end + 'T23:59:59') : null;
       console.log('Date filter range:', {
         start: startDate,
         end: endDate
       });
+      
       filtered = filtered.filter(client => {
-        if (!client.firstVisitDate) return false;
+        if (!client.firstVisitDate) {
+          console.log('Client has no firstVisitDate:', client.memberId);
+          return false;
+        }
+        
         const clientDate = parseDate(client.firstVisitDate);
         if (!clientDate) {
-          console.warn('Invalid client date:', client.firstVisitDate);
+          console.warn('Invalid client date:', client.firstVisitDate, 'for client:', client.memberId);
           return false;
         }
 
         // Set client date to start of day for comparison
         clientDate.setHours(0, 0, 0, 0);
         const withinRange = (!startDate || clientDate >= startDate) && (!endDate || clientDate <= endDate);
+        
         if (!withinRange) {
           console.log('Client filtered out by date:', {
+            clientId: client.memberId,
             clientDate: clientDate.toISOString().split('T')[0],
             originalDate: client.firstVisitDate,
             startDate: startDate?.toISOString().split('T')[0],
@@ -130,6 +146,8 @@ const ClientRetention = () => {
         return withinRange;
       });
       console.log(`Date filter applied: ${data.length} -> ${filtered.length} records`);
+    } else {
+      console.log('No date filter applied - showing all data:', filtered.length, 'records');
     }
 
     // Apply location filter - check both firstVisitLocation and homeLocation

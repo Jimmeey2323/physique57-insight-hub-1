@@ -71,7 +71,14 @@ export const ClientConversionMonthOnMonthByTypeTable: React.FC<ClientConversionM
         month: 'short',
         year: 'numeric'
       });
-      const clientType = client.isNew || 'Unknown';
+      const clientType = (() => {
+        const isNewValue = String(client.isNew || '').toLowerCase();
+        if (isNewValue.includes('new')) {
+          return 'New Members';
+        } else {
+          return 'Existing Members';
+        }
+      })();
 
       // Create unique key for month + type combination
       const key = `${monthKey}-${clientType}`;
@@ -94,18 +101,18 @@ export const ClientConversionMonthOnMonthByTypeTable: React.FC<ClientConversionM
       stat.totalMembers++;
       stat.clients.push(client);
 
-      // Count new members - when isNew contains "new" (case insensitive)
+      // Count new members - when isNew contains "new" (exact business rule)
       const isNewValue = (client.isNew || '').toLowerCase();
       if (isNewValue.includes('new')) {
         stat.newMembers++;
       }
 
-      // Count conversions - exact match for consistency with other components
+      // Count conversions - exact match for 'Converted'
       if (client.conversionStatus === 'Converted') {
         stat.converted++;
       }
 
-      // Count retention - exact match for consistency with other components  
+      // Count retention - exact match for 'Retained'
       if (client.retentionStatus === 'Retained') {
         stat.retained++;
       }
@@ -209,24 +216,24 @@ export const ClientConversionMonthOnMonthByTypeTable: React.FC<ClientConversionM
       <CardContent className="p-0 overflow-hidden">
         <div className="overflow-x-auto max-h-[600px]">
           <Table className="w-full">
-            <TableHeader className="sticky top-0 z-20 bg-white text-gray-800">
-              <TableRow className="text-white border-b-4 border-gray-800 h-12 bg-slate-900 font-medium ">
-                <TableHead className="font-bold text-white text-xs px-4 sticky left-0 bg-gray-900 z-10 min-w-[100px]">Month</TableHead>
-                <TableHead className="font-bold text-gray-900 text-xs px-3 text-center min-w-[80px]">Type</TableHead>
-                <TableHead className="font-bold text-gray-900 text-xs px-3 text-center min-w-[80px]">Members</TableHead>
-                <TableHead className="font-bold text-gray-900 text-xs px-3 text-center min-w-[80px]">New</TableHead>
-                <TableHead className="font-bold text-gray-900 text-xs px-3 text-center min-w-[90px]">Converted</TableHead>
-                <TableHead className="font-bold text-gray-900 text-xs px-3 text-center min-w-[80px]">Conv Rate</TableHead>
-                <TableHead className="font-bold text-gray-900 text-xs px-3 text-center min-w-[80px]">Retained</TableHead>
-                <TableHead className="font-bold text-gray-900 text-xs px-3 text-center min-w-[80px]">Ret Rate</TableHead>
-                <TableHead className="font-bold text-gray-900 text-xs px-3 text-center min-w-[80px]">Avg LTV</TableHead>
-                <TableHead className="font-bold text-gray-900 text-xs px-3 text-center min-w-[80px]">Avg Conv Days</TableHead>
-                <TableHead className="font-bold text-gray-900 text-xs px-3 text-center min-w-[80px]">Avg Visits</TableHead>
+            <TableHeader className="sticky top-0 z-20 bg-slate-100">
+              <TableRow className="border-b border-slate-300 h-12 bg-slate-100">
+                <TableHead className="font-bold text-slate-900 text-xs px-4 sticky left-0 bg-slate-100 z-10 min-w-[100px]">Month</TableHead>
+                <TableHead className="font-bold text-slate-900 text-xs px-3 text-center min-w-[80px]">Type</TableHead>
+                <TableHead className="font-bold text-slate-900 text-xs px-3 text-center min-w-[80px]">Members</TableHead>
+                <TableHead className="font-bold text-slate-900 text-xs px-3 text-center min-w-[80px]">New</TableHead>
+                <TableHead className="font-bold text-slate-900 text-xs px-3 text-center min-w-[90px]">Converted</TableHead>
+                <TableHead className="font-bold text-slate-900 text-xs px-3 text-center min-w-[80px]">Conv Rate</TableHead>
+                <TableHead className="font-bold text-slate-900 text-xs px-3 text-center min-w-[80px]">Retained</TableHead>
+                <TableHead className="font-bold text-slate-900 text-xs px-3 text-center min-w-[80px]">Ret Rate</TableHead>
+                <TableHead className="font-bold text-slate-900 text-xs px-3 text-center min-w-[80px]">Avg LTV</TableHead>
+                <TableHead className="font-bold text-slate-900 text-xs px-3 text-center min-w-[80px]">Avg Conv Days</TableHead>
+                <TableHead className="font-bold text-slate-900 text-xs px-3 text-center min-w-[80px]">Avg Visits</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {tableData.map((row, index) => <TableRow key={`${row.month}-${row.type}`} className="hover:bg-gray-50 transition-colors cursor-pointer border-b border-gray-100 h-10" onClick={() => onRowClick?.(row)}>
-                  <TableCell className="font-semibold text-gray-900 text-xs px-4 sticky left-0 bg-white z-10 border-r">{row.month}</TableCell>
+                  <TableCell className="font-semibold text-gray-900 text-xs px-4 sticky left-0 bg-slate-100 z-10 border-r">{row.month}</TableCell>
                   <TableCell className="text-xs px-3 text-left">
                     <Badge variant={row.type.toLowerCase().includes('new') ? 'default' : 'secondary'} className="text-xs rounded-t rounded-b py-2 min-w-52 bg-indigo-900 text-white font-medium rounded-lg">
                       {row.type}
