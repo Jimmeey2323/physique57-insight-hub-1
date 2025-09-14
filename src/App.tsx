@@ -9,7 +9,6 @@ import { GlobalNoteTaker } from "@/components/ui/GlobalNoteTaker";
 import { ProfessionalLoader } from "@/components/dashboard/ProfessionalLoader";
 import { usePerformanceOptimization } from "@/hooks/usePerformanceOptimization";
 import { GlobalFiltersProvider } from "@/contexts/GlobalFiltersContext";
-import { ThemeProvider } from "next-themes";
 
 // Lazy load pages for better performance
 const Index = React.lazy(() => import("./pages/Index"));
@@ -34,11 +33,10 @@ const App = () => {
   
   return (
     <QueryClientProvider client={queryClient}>
-      <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-        <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
+      <TooltipProvider>
+      <Toaster />
+      <Sonner />
+      <BrowserRouter>
         <GlobalFiltersProvider>
           <GlobalNoteTaker />
           <Suspense fallback={<ProfessionalLoader variant="analytics" subtitle="Loading page..." />}>
@@ -61,9 +59,8 @@ const App = () => {
             </Routes>
           </Suspense>
         </GlobalFiltersProvider>
-        </BrowserRouter>
-      </TooltipProvider>
-    </ThemeProvider>
+      </BrowserRouter>
+    </TooltipProvider>
   </QueryClientProvider>
   );
 };
