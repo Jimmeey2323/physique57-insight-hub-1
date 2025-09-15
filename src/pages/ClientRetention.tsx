@@ -348,7 +348,7 @@ const ClientRetention = () => {
   // Remove individual loader - rely on global loader only
   console.log('Rendering ClientRetention with data:', data.length, 'records, filtered:', filteredData.length);
   const exportButton = <AdvancedExportButton newClientData={filteredData} defaultFileName={`client-conversion-${selectedLocation.replace(/\s+/g, '-').toLowerCase()}`} size="sm" variant="ghost" />;
-  return <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 relative overflow-hidden">
+  return <div className="min-h-screen bg-white relative overflow-hidden">
       {/* Enhanced Background Elements */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute top-20 left-10 w-96 h-96 bg-gradient-to-r from-blue-500/10 to-purple-500/10 rounded-full floating-animation stagger-1"></div>
@@ -357,7 +357,7 @@ const ClientRetention = () => {
       </div>
 
       <div className="relative z-10">
-        <div className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white slide-in-from-left">
+        <div className="bg-white text-slate-800 slide-in-from-left">
           <ModernHeroSection 
             title="Client Conversion & Retention" 
             subtitle="Comprehensive client acquisition and retention analysis across all customer touchpoints" 
@@ -367,7 +367,7 @@ const ClientRetention = () => {
           />
         </div>
 
-        <div className="container mx-auto px-6 py-8 bg-gradient-to-br from-white via-slate-50/50 to-purple-50/30 min-h-screen">
+        <div className="container mx-auto px-6 py-8 bg-white min-h-screen">
           <main className="space-y-8 slide-in-from-right stagger-1">
             {/* Enhanced Filter Section */}
             <div className="glass-card modern-card-hover p-6 rounded-2xl">

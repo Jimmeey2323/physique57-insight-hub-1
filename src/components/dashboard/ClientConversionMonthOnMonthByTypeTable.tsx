@@ -249,7 +249,6 @@ export const ClientConversionMonthOnMonthByTypeTable = ({
               <TableRow className={`border-b h-12 ${getTableHeaderClasses('retention')}`}>
                 <TableHead className="font-bold text-white text-xs px-4 sticky left-0 z-10 min-w-[100px]">Month</TableHead>
                 <TableHead className="font-bold text-white text-xs px-3 text-center min-w-[80px]">Type</TableHead>
-                <TableHead className="font-bold text-white text-xs px-3 text-center min-w-[80px]">Visits</TableHead>
                 <TableHead className="font-bold text-white text-xs px-3 text-center min-w-[80px]">Trials</TableHead>
                 <TableHead className="font-bold text-white text-xs px-3 text-center min-w-[90px]">New Members</TableHead>
                 <TableHead className="font-bold text-white text-xs px-3 text-center min-w-[80px]">Retained</TableHead>
@@ -269,7 +268,6 @@ export const ClientConversionMonthOnMonthByTypeTable = ({
                       {row.type}
                     </Badge>
                   </TableCell>
-                  <TableCell className="text-xs px-3 text-center font-medium text-cyan-600">{formatNumber(row.visits || 0)}</TableCell>
                   <TableCell className="text-xs px-3 text-center font-medium">{formatNumber(row.totalTrials)}</TableCell>
                   <TableCell className="text-xs px-3 text-center font-medium">{formatNumber(row.newMembers)}</TableCell>
                   <TableCell className="text-xs px-3 text-center font-medium">{formatNumber(row.retained)}</TableCell>
@@ -296,7 +294,6 @@ export const ClientConversionMonthOnMonthByTypeTable = ({
                     {totalsRow.type}
                   </Badge>
                 </TableCell>
-                <TableCell className="text-xs px-3 text-center font-bold text-cyan-600">{formatNumber(totalsRow.visits)}</TableCell>
                 <TableCell className="text-xs px-3 text-center font-bold">{formatNumber(totalsRow.totalTrials)}</TableCell>
                 <TableCell className="text-xs px-3 text-center font-bold">{formatNumber(totalsRow.newMembers)}</TableCell>
                 <TableCell className="text-xs px-3 text-center font-bold">{formatNumber(totalsRow.retained)}</TableCell>

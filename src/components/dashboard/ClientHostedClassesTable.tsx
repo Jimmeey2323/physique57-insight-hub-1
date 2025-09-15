@@ -122,12 +122,12 @@ export const ClientHostedClassesTable: React.FC<ClientHostedClassesTableProps> =
     },
     {
       key: 'totalMembers',
-      header: 'Total Members',
+      header: 'Trials',
       align: 'center' as const,
       render: (value: number) => (
         <div className="text-center">
           <div className="text-lg font-bold text-blue-600">{formatNumber(value)}</div>
-          <div className="text-xs text-slate-500">members</div>
+          <div className="text-xs text-slate-500">trials</div>
         </div>
       )
     },
@@ -139,6 +139,30 @@ export const ClientHostedClassesTable: React.FC<ClientHostedClassesTableProps> =
         <div className="text-center">
           <div className="text-lg font-bold text-green-600">{formatNumber(value)}</div>
           <div className="text-xs text-slate-500">new</div>
+        </div>
+      )
+    },
+    {
+      key: 'retained',
+      header: 'Retained',
+      align: 'center' as const,
+      render: (value: number) => (
+        <div className="text-center">
+          <div className="text-lg font-bold text-purple-600">{formatNumber(value)}</div>
+          <div className="text-xs text-slate-500">retained</div>
+        </div>
+      )
+    },
+    {
+      key: 'retentionRate',
+      header: 'Retention %',
+      align: 'center' as const,
+      render: (value: number) => (
+        <div className="flex items-center justify-center gap-1">
+          {value > 70 ? <TrendingUp className="w-3 h-3 text-green-500" /> : value < 50 ? <TrendingDown className="w-3 h-3 text-red-500" /> : null}
+          <Badge className={`font-bold ${value > 70 ? 'bg-green-100 text-green-800' : value < 50 ? 'bg-red-100 text-red-800' : 'bg-gray-100 text-gray-800'}`}>
+            {value.toFixed(1)}%
+          </Badge>
         </div>
       )
     },
@@ -155,7 +179,7 @@ export const ClientHostedClassesTable: React.FC<ClientHostedClassesTableProps> =
     },
     {
       key: 'conversionRate',
-      header: 'Conv. Rate',
+      header: 'Conversion %',
       align: 'center' as const,
       render: (value: number) => (
         <div className="flex items-center justify-center gap-1">
@@ -163,17 +187,6 @@ export const ClientHostedClassesTable: React.FC<ClientHostedClassesTableProps> =
           <Badge className={`font-bold ${value > 25 ? 'bg-green-100 text-green-800' : value < 10 ? 'bg-red-100 text-red-800' : 'bg-gray-100 text-gray-800'}`}>
             {value.toFixed(1)}%
           </Badge>
-        </div>
-      )
-    },
-    {
-      key: 'retained',
-      header: 'Retained',
-      align: 'center' as const,
-      render: (value: number) => (
-        <div className="text-center">
-          <div className="text-lg font-bold text-purple-600">{formatNumber(value)}</div>
-          <div className="text-xs text-slate-500">retained</div>
         </div>
       )
     },
@@ -190,7 +203,7 @@ export const ClientHostedClassesTable: React.FC<ClientHostedClassesTableProps> =
     },
     {
       key: 'avgConversionInterval',
-      header: 'Avg Conv. Interval',
+      header: 'Avg Conv Days',
       align: 'center' as const,
       render: (value: number) => (
         <Badge variant="outline" className="bg-orange-50 text-orange-700 border-orange-200 font-bold">

@@ -45,6 +45,10 @@ export const PowerCycleBarreStrengthComprehensiveSection: React.FC<PowerCycleBar
   const filteredData = useMemo(() => {
     if (!data) return [];
     
+    console.log('PowerCycle filtering - Input data:', data.length, 'items');
+    console.log('Sample monthYear formats:', data.slice(0, 5).map(item => item.monthYear));
+    console.log('Filters:', { selectedLocation, selectedTimeframe, selectedTrainer, dateRange });
+    
     let filtered = [...data];
     
     // Apply location filter
@@ -63,22 +67,46 @@ export const PowerCycleBarreStrengthComprehensiveSection: React.FC<PowerCycleBar
         filtered = filtered.filter(item => {
           if (!item.monthYear) return false;
           
-          const [monthName, year] = item.monthYear.split(' ');
-          const monthIndex = ['January', 'February', 'March', 'April', 'May', 'June',
-            'July', 'August', 'September', 'October', 'November', 'December'].indexOf(monthName);
-          const itemDate = new Date(parseInt(year), monthIndex, 1);
+          // Handle different monthYear formats (e.g., "Jan 2024", "January 2024", "2024-01")
+          let itemDate: Date;
+          
+          if (item.monthYear.includes('-')) {
+            // Format: "2024-01"
+            const [year, month] = item.monthYear.split('-');
+            itemDate = new Date(parseInt(year), parseInt(month) - 1, 1);
+          } else {
+            // Format: "Jan 2024" or "January 2024"
+            const [monthName, year] = item.monthYear.split(' ');
+            const fullMonthNames = ['January', 'February', 'March', 'April', 'May', 'June',
+              'July', 'August', 'September', 'October', 'November', 'December'];
+            const shortMonthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+              'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            
+            let monthIndex = fullMonthNames.indexOf(monthName);
+            if (monthIndex === -1) {
+              monthIndex = shortMonthNames.indexOf(monthName);
+            }
+            
+            if (monthIndex === -1) return false; // Invalid month name
+            
+            itemDate = new Date(parseInt(year), monthIndex, 1);
+          }
+          
+          if (isNaN(itemDate.getTime())) return false; // Invalid date
           
           let isInRange = true;
           
           if (dateRange.start) {
             const startDate = new Date(dateRange.start);
             startDate.setDate(1);
+            startDate.setHours(0, 0, 0, 0);
             isInRange = isInRange && itemDate >= startDate;
           }
           
           if (dateRange.end) {
             const endDate = new Date(dateRange.end);
             endDate.setMonth(endDate.getMonth() + 1, 0);
+            endDate.setHours(23, 59, 59, 999);
             isInRange = isInRange && itemDate <= endDate;
           }
           
@@ -101,20 +129,47 @@ export const PowerCycleBarreStrengthComprehensiveSection: React.FC<PowerCycleBar
           default:
             break;
         }
+        startDate.setDate(1);
+        startDate.setHours(0, 0, 0, 0);
         
         if (selectedTimeframe !== 'all') {
           filtered = filtered.filter(item => {
             if (!item.monthYear) return false;
-            const [monthName, year] = item.monthYear.split(' ');
-            const monthIndex = ['January', 'February', 'March', 'April', 'May', 'June',
-              'July', 'August', 'September', 'October', 'November', 'December'].indexOf(monthName);
-            const itemDate = new Date(parseInt(year), monthIndex, 1);
+            
+            // Handle different monthYear formats
+            let itemDate: Date;
+            
+            if (item.monthYear.includes('-')) {
+              // Format: "2024-01"
+              const [year, month] = item.monthYear.split('-');
+              itemDate = new Date(parseInt(year), parseInt(month) - 1, 1);
+            } else {
+              // Format: "Jan 2024" or "January 2024"
+              const [monthName, year] = item.monthYear.split(' ');
+              const fullMonthNames = ['January', 'February', 'March', 'April', 'May', 'June',
+                'July', 'August', 'September', 'October', 'November', 'December'];
+              const shortMonthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+                'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+              
+              let monthIndex = fullMonthNames.indexOf(monthName);
+              if (monthIndex === -1) {
+                monthIndex = shortMonthNames.indexOf(monthName);
+              }
+              
+              if (monthIndex === -1) return false; // Invalid month name
+              
+              itemDate = new Date(parseInt(year), monthIndex, 1);
+            }
+            
+            if (isNaN(itemDate.getTime())) return false; // Invalid date
+            
             return itemDate >= startDate && itemDate <= now;
           });
         }
       }
     }
     
+    console.log('PowerCycle filtering - Output data:', filtered.length, 'items');
     return filtered;
   }, [data, selectedLocation, selectedTimeframe, selectedTrainer, dateRange]);
 

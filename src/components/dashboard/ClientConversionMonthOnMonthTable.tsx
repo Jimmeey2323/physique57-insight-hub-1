@@ -170,14 +170,6 @@ export const ClientConversionMonthOnMonthTable: React.FC<ClientConversionMonthOn
       )
     },
     {
-      key: 'visits',
-      header: 'Visits',
-      align: 'center' as const,
-      render: (value: number) => (
-        <span className="text-base font-bold text-cyan-600">{formatNumber(value)}</span>
-      )
-    },
-    {
       key: 'totalMembers',
       header: 'Trials',
       align: 'center' as const,

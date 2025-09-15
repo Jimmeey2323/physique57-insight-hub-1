@@ -158,42 +158,20 @@ export const ClientConversionYearOnYearTable: React.FC<ClientConversionYearOnYea
       className: 'font-semibold min-w-[80px]'
     },
     {
-      key: 'currentVisits' as const,
-      header: `${new Date().getFullYear()} Visits`,
-      align: 'center' as const,
-      render: (value: number) => <span className="text-base font-bold text-cyan-600">{formatNumber(value)}</span>
-    },
-    {
-      key: 'previousVisits' as const,
-      header: `${new Date().getFullYear() - 1} Visits`,
-      align: 'center' as const,
-      render: (value: number) => <span className="text-base font-bold text-slate-600">{formatNumber(value)}</span>
-    },
-    {
-      key: 'visitsGrowth' as const,
-      header: 'Visits Growth %',
-      align: 'center' as const,
-      render: (value: number) => (
-        <span className={`text-base font-bold ${(value || 0) > 0 ? 'text-green-600' : (value || 0) < 0 ? 'text-red-600' : 'text-slate-600'}`}>
-          {(value || 0) > 0 ? '+' : ''}{(value || 0).toFixed(1)}%
-        </span>
-      )
-    },
-    {
       key: 'currentTotalMembers' as const,
-      header: `${new Date().getFullYear()} Total`,
+      header: `${new Date().getFullYear()} Trials`,
       align: 'center' as const,
       render: (value: number) => <span className="text-base font-bold text-blue-600">{formatNumber(value)}</span>
     },
     {
       key: 'previousTotalMembers' as const,
-      header: `${new Date().getFullYear() - 1} Total`,
+      header: `${new Date().getFullYear() - 1} Trials`,
       align: 'center' as const,
       render: (value: number) => <span className="text-base font-bold text-slate-600">{formatNumber(value)}</span>
     },
     {
       key: 'totalMembersGrowth' as const,
-      header: 'Total Growth %',
+      header: 'Trials Growth %',
       align: 'center' as const,
       render: (value: number) => (
         <span className={`text-base font-bold ${(value || 0) > 0 ? 'text-green-600' : (value || 0) < 0 ? 'text-red-600' : 'text-slate-600'}`}>
@@ -203,19 +181,19 @@ export const ClientConversionYearOnYearTable: React.FC<ClientConversionYearOnYea
     },
     {
       key: 'currentNewMembers' as const,
-      header: `${new Date().getFullYear()} New`,
+      header: `${new Date().getFullYear()} New Members`,
       align: 'center' as const,
       render: (value: number) => <span className="text-base font-bold text-green-600">{formatNumber(value)}</span>
     },
     {
       key: 'previousNewMembers' as const,
-      header: `${new Date().getFullYear() - 1} New`,
+      header: `${new Date().getFullYear() - 1} New Members`,
       align: 'center' as const,
       render: (value: number) => <span className="text-base font-bold text-slate-600">{formatNumber(value)}</span>
     },
     {
       key: 'newMembersGrowth' as const,
-      header: 'Growth %',
+      header: 'New Members Growth %',
       align: 'center' as const,
       render: (value: number) => (
         <span className={`text-base font-bold ${(value || 0) > 0 ? 'text-green-600' : (value || 0) < 0 ? 'text-red-600' : 'text-slate-600'}`}>
@@ -225,19 +203,19 @@ export const ClientConversionYearOnYearTable: React.FC<ClientConversionYearOnYea
     },
     {
       key: 'currentConversionRate' as const,
-      header: `${new Date().getFullYear()} Conv.`,
+      header: `${new Date().getFullYear()} Conversion %`,
       align: 'center' as const,
       render: (value: number) => <span className="text-base font-bold text-green-600">{(value || 0).toFixed(1)}%</span>
     },
     {
       key: 'previousConversionRate' as const,
-      header: `${new Date().getFullYear() - 1} Conv.`,
+      header: `${new Date().getFullYear() - 1} Conversion %`,
       align: 'center' as const,
       render: (value: number) => <span className="text-base font-bold text-slate-600">{(value || 0).toFixed(1)}%</span>
     },
     {
       key: 'conversionRateGrowth' as const,
-      header: 'Conv. Δ',
+      header: 'Conv. Growth',
       align: 'center' as const,
       render: (value: number) => (
         <span className={`text-base font-bold ${(value || 0) > 0 ? 'text-green-600' : (value || 0) < 0 ? 'text-red-600' : 'text-slate-600'}`}>
@@ -247,19 +225,19 @@ export const ClientConversionYearOnYearTable: React.FC<ClientConversionYearOnYea
     },
     {
       key: 'currentAvgLTV' as const,
-      header: `${new Date().getFullYear()} LTV`,
+      header: `${new Date().getFullYear()} Avg LTV`,
       align: 'right' as const,
       render: (value: number) => <span className="text-base font-bold text-purple-600">{formatCurrency(value || 0)}</span>
     },
     {
       key: 'previousAvgLTV' as const,
-      header: `${new Date().getFullYear() - 1} LTV`,
+      header: `${new Date().getFullYear() - 1} Avg LTV`,
       align: 'right' as const,
       render: (value: number) => <span className="text-base font-bold text-slate-600">{formatCurrency(value || 0)}</span>
     },
     {
       key: 'avgLTVGrowth' as const,
-      header: 'LTV Growth',
+      header: 'LTV Growth %',
       align: 'center' as const,
       render: (value: number) => (
         <span className={`text-base font-bold ${(value || 0) > 0 ? 'text-green-600' : (value || 0) < 0 ? 'text-red-600' : 'text-slate-600'}`}>
