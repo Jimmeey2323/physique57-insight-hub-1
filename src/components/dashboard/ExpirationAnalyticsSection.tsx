@@ -222,12 +222,12 @@ export const ExpirationAnalyticsSection: React.FC<ExpirationAnalyticsSectionProp
 
           {/* Location Tabs */}
           <Tabs value={activeLocation} onValueChange={setActiveLocation} className="w-full">
-            <TabsList className="grid w-full grid-cols-4">
+            <TabsList className="modern-tabs grid w-full grid-cols-4">
               {locations.map(location => (
                 <TabsTrigger 
                   key={location.id} 
                   value={location.id}
-                  className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-indigo-500 data-[state=active]:to-purple-600 data-[state=active]:text-white"
+                  className="modern-tab-trigger tab-variant-purple"
                 >
                   {location.name}
                 </TabsTrigger>
@@ -244,11 +244,11 @@ export const ExpirationAnalyticsSection: React.FC<ExpirationAnalyticsSectionProp
             <TabsContent key={location.id} value={location.id} className="mt-0">
               {/* Analysis Type Tabs */}
               <Tabs defaultValue="overview" className="w-full">
-                <TabsList className="grid w-full grid-cols-2 mb-6">
-                  <TabsTrigger value="overview" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-indigo-600 data-[state=active]:text-white">
+                <TabsList className="modern-tabs grid w-full grid-cols-2 mb-6">
+                  <TabsTrigger value="overview" className="modern-tab-trigger tab-variant-blue">
                     Overview & Analytics
                   </TabsTrigger>
-                  <TabsTrigger value="churned" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-red-500 data-[state=active]:to-red-600 data-[state=active]:text-white">
+                  <TabsTrigger value="churned" className="modern-tab-trigger tab-variant-rose">
                     Churned Members Details
                   </TabsTrigger>
                 </TabsList>

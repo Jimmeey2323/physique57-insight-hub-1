@@ -348,47 +348,57 @@ const ClientRetention = () => {
   // Remove individual loader - rely on global loader only
   console.log('Rendering ClientRetention with data:', data.length, 'records, filtered:', filteredData.length);
   const exportButton = <AdvancedExportButton newClientData={filteredData} defaultFileName={`client-conversion-${selectedLocation.replace(/\s+/g, '-').toLowerCase()}`} size="sm" variant="ghost" />;
-  return <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
-      <div className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white">
-        <ModernHeroSection 
-          title="Client Conversion & Retention" 
-          subtitle="Comprehensive client acquisition and retention analysis across all customer touchpoints" 
-          variant="client" 
-          metrics={heroMetrics} 
-          exportButton={exportButton}
-        />
+  return <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 relative overflow-hidden">
+      {/* Enhanced Background Elements */}
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute top-20 left-10 w-96 h-96 bg-gradient-to-r from-blue-500/10 to-purple-500/10 rounded-full floating-animation stagger-1"></div>
+        <div className="absolute bottom-20 right-10 w-80 h-80 bg-gradient-to-r from-purple-500/10 to-pink-500/10 rounded-full floating-animation stagger-3"></div>
+        <div className="absolute top-1/2 left-1/3 w-72 h-72 bg-gradient-to-r from-cyan-500/10 to-teal-500/10 rounded-full morph-shape stagger-2"></div>
       </div>
 
-      <div className="container mx-auto px-6 py-8 bg-white min-h-screen">
-        <main className="space-y-8">
-          {/* Enhanced Filter Section */}
-          <EnhancedClientConversionFilterSection filters={filters} onFiltersChange={setFilters} locations={uniqueLocations} trainers={uniqueTrainers} membershipTypes={uniqueMembershipTypes} />
+      <div className="relative z-10">
+        <div className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white slide-in-from-left">
+          <ModernHeroSection 
+            title="Client Conversion & Retention" 
+            subtitle="Comprehensive client acquisition and retention analysis across all customer touchpoints" 
+            variant="client" 
+            metrics={heroMetrics} 
+            exportButton={exportButton}
+          />
+        </div>
 
-          {/* Location Tabs - Fixed styling */}
-          <div className="flex justify-center mb-8">
-            <div className="bg-white/20 backdrop-blur-sm p-2 rounded-2xl shadow-lg border border-white/30 grid grid-cols-4 w-full max-w-4xl">
-              <button 
-                onClick={() => setSelectedLocation('All Locations')} 
-                className={cn(
-                  "px-6 py-3 rounded-xl transition-all duration-300 font-medium text-sm flex flex-col items-center gap-2",
-                  selectedLocation === 'All Locations' 
-                    ? "bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg" 
-                    : "text-slate-800 hover:text-slate-700 hover:bg-slate-100/50"
-                )}
-              >
-                <Users className="w-6 h-6" />
-                <div className="text-center">
-                  <div className="font-bold">All Locations</div>
-                  <div className="text-xs opacity-80">({data.length})</div>
-                </div>
-              </button>
+        <div className="container mx-auto px-6 py-8 bg-gradient-to-br from-white via-slate-50/50 to-purple-50/30 min-h-screen">
+          <main className="space-y-8 slide-in-from-right stagger-1">
+            {/* Enhanced Filter Section */}
+            <div className="glass-card modern-card-hover p-6 rounded-2xl">
+              <EnhancedClientConversionFilterSection filters={filters} onFiltersChange={setFilters} locations={uniqueLocations} trainers={uniqueTrainers} membershipTypes={uniqueMembershipTypes} />
+            </div>
+
+            {/* Enhanced Location Tabs */}
+            <div className="flex justify-center mb-8">
+              <div className="glass-card glow-pulse p-2 rounded-2xl shadow-lg border border-white/30 grid grid-cols-4 w-full max-w-4xl">
+                <button 
+                  onClick={() => setSelectedLocation('All Locations')} 
+                  className={cn(
+                    "px-6 py-3 rounded-xl transition-all duration-500 font-medium text-sm flex flex-col items-center gap-2 transform hover:scale-105",
+                    selectedLocation === 'All Locations' 
+                      ? "bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg hover:shadow-xl" 
+                      : "text-slate-800 hover:text-slate-700 hover:bg-white/20 backdrop-blur-sm"
+                  )}
+                >
+                  <Users className="w-6 h-6" />
+                  <div className="text-center">
+                    <div className="font-bold">All Locations</div>
+                    <div className="text-xs opacity-80">({data.length})</div>
+                  </div>
+                </button>
               <button 
                 onClick={() => setSelectedLocation('Kwality House, Kemps Corner')} 
                 className={cn(
-                  "px-6 py-3 rounded-xl transition-all duration-300 font-medium text-sm flex flex-col items-center gap-2",
+                  "px-6 py-3 rounded-xl transition-all duration-500 font-medium text-sm flex flex-col items-center gap-2 transform hover:scale-105",
                   selectedLocation === 'Kwality House, Kemps Corner' 
-                    ? "bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg" 
-                    : "text-slate-800 hover:text-slate-700 hover:bg-slate-100/50"
+                    ? "bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg hover:shadow-xl" 
+                    : "text-slate-800 hover:text-slate-700 hover:bg-white/20 backdrop-blur-sm"
                 )}
               >
                 <Users className="w-6 h-6" />
@@ -400,10 +410,10 @@ const ClientRetention = () => {
               <button 
                 onClick={() => setSelectedLocation('Supreme HQ, Bandra')} 
                 className={cn(
-                  "px-6 py-3 rounded-xl transition-all duration-300 font-medium text-sm flex flex-col items-center gap-2",
+                  "px-6 py-3 rounded-xl transition-all duration-500 font-medium text-sm flex flex-col items-center gap-2 transform hover:scale-105",
                   selectedLocation === 'Supreme HQ, Bandra' 
-                    ? "bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg" 
-                    : "text-slate-800 hover:text-slate-700 hover:bg-slate-100/50"
+                    ? "bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg hover:shadow-xl" 
+                    : "text-slate-800 hover:text-slate-700 hover:bg-white/20 backdrop-blur-sm"
                 )}
               >
                 <Users className="w-6 h-6" />
@@ -415,10 +425,10 @@ const ClientRetention = () => {
               <button 
                 onClick={() => setSelectedLocation('Kenkere House, Bengaluru')} 
                 className={cn(
-                  "px-6 py-3 rounded-xl transition-all duration-300 font-medium text-sm flex flex-col items-center gap-2",
+                  "px-6 py-3 rounded-xl transition-all duration-500 font-medium text-sm flex flex-col items-center gap-2 transform hover:scale-105",
                   selectedLocation === 'Kenkere House' 
-                    ? "bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg" 
-                    : "text-slate-800 hover:text-slate-700 hover:bg-slate-100/50"
+                    ? "bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg hover:shadow-xl" 
+                    : "text-slate-800 hover:text-slate-700 hover:bg-white/20 backdrop-blur-sm"
                 )}
               >
                 <Users className="w-6 h-6" />
@@ -434,37 +444,43 @@ const ClientRetention = () => {
             </div>
           </div>
 
-          {/* Metric Cards */}
-          <ClientConversionMetricCards data={filteredData} onCardClick={(title, data, metricType) => setDrillDownModal({
-          isOpen: true,
-          client: null,
-          title: `${title} - Detailed Analysis`,
-          data: {
-            clients: data,
-            metricType
-          },
-          type: 'metric'
-        })} />
+          {/* Enhanced Metric Cards */}
+          <div className="glass-card modern-card-hover rounded-2xl p-6 soft-bounce stagger-2">
+            <ClientConversionMetricCards data={filteredData} onCardClick={(title, data, metricType) => setDrillDownModal({
+              isOpen: true,
+              client: null,
+              title: `${title} - Detailed Analysis`,
+              data: {
+                clients: data,
+                metricType
+              },
+              type: 'metric'
+            })} />
+          </div>
 
-          {/* Simplified Ranking System */}
-          <ClientConversionSimplifiedRanks data={filteredData} />
+          {/* Enhanced Simplified Ranking System */}
+          <div className="glass-card modern-card-hover rounded-2xl p-6 slide-in-right stagger-3">
+            <ClientConversionSimplifiedRanks data={filteredData} />
+          </div>
 
           {/* Enhanced Interactive Charts - Collapsed by default */}
-          <div className="space-y-4">
-            <div className="bg-white rounded-lg border">
+          <div className="space-y-4 slide-in-left stagger-4">
+            <div className="glass-card rounded-2xl border-0 shadow-lg">
               <details className="group">
-                <summary className="cursor-pointer p-4 font-semibold text-slate-800 border-b group-open:bg-gray-50">
+                <summary className="cursor-pointer p-6 font-semibold text-slate-800 border-b border-white/20 group-open:bg-gradient-to-r group-open:from-purple-50/50 group-open:to-pink-50/50 rounded-t-2xl transition-all duration-300">
                   📊 Interactive Charts & Visualizations
                 </summary>
-                <div className="p-4">
+                <div className="p-6 bg-gradient-to-br from-white to-slate-50/50">
                   <ClientConversionEnhancedCharts data={filteredData} />
                 </div>
               </details>
             </div>
           </div>
 
-          {/* Data Table Selector */}
-          <ClientConversionDataTableSelector activeTable={activeTable} onTableChange={setActiveTable} dataLength={filteredData.length} />
+          {/* Enhanced Data Table Selector */}
+          <div className="glass-card modern-card-hover rounded-2xl p-6 slide-in-right stagger-5">
+            <ClientConversionDataTableSelector activeTable={activeTable} onTableChange={setActiveTable} dataLength={filteredData.length} />
+          </div>
 
           {/* Selected Data Table */}
           <div className="space-y-8">
@@ -514,13 +530,20 @@ const ClientRetention = () => {
         </main>
 
         {/* Enhanced Drill Down Modal */}
-        <ClientConversionDrillDownModalV3 isOpen={drillDownModal.isOpen} onClose={() => setDrillDownModal({
-        isOpen: false,
-        client: null,
-        title: '',
-        data: null,
-        type: 'month'
-      })} title={drillDownModal.title} data={drillDownModal.data} type={drillDownModal.type} />
+        <ClientConversionDrillDownModalV3 
+          isOpen={drillDownModal.isOpen} 
+          onClose={() => setDrillDownModal({
+            isOpen: false,
+            client: null,
+            title: '',
+            data: null,
+            type: 'month'
+          })} 
+          title={drillDownModal.title} 
+          data={drillDownModal.data} 
+          type={drillDownModal.type} 
+        />
+        </div>
       </div>
       
       <Footer />

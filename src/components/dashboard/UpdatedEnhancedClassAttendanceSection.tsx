@@ -62,40 +62,40 @@ export const UpdatedEnhancedClassAttendanceSection: React.FC = () => {
 
             {/* Main Analytics Tabs */}
             <Tabs defaultValue="comprehensive" className="w-full">
-              <TabsList className="grid grid-cols-6 w-full bg-white border border-slate-200 p-1 rounded-lg">
+              <TabsList className="modern-tabs grid grid-cols-6 w-full">
                 <TabsTrigger 
                   value="comprehensive" 
-                  className="data-[state=active]:bg-blue-500 data-[state=active]:text-white"
+                  className="modern-tab-trigger tab-variant-blue"
                 >
                   Comprehensive
                 </TabsTrigger>
                 <TabsTrigger 
                   value="month-on-month"
-                  className="data-[state=active]:bg-green-500 data-[state=active]:text-white"
+                  className="modern-tab-trigger tab-variant-emerald"
                 >
                   Month-on-Month
                 </TabsTrigger>
                 <TabsTrigger 
                   value="rankings"
-                  className="data-[state=active]:bg-purple-500 data-[state=active]:text-white"
+                  className="modern-tab-trigger tab-variant-purple"
                 >
                   Rankings
                 </TabsTrigger>
                 <TabsTrigger 
                   value="performance"
-                  className="data-[state=active]:bg-orange-500 data-[state=active]:text-white"
+                  className="modern-tab-trigger tab-variant-blue"
                 >
                   Performance
                 </TabsTrigger>
                 <TabsTrigger 
                   value="analytics"
-                  className="data-[state=active]:bg-red-500 data-[state=active]:text-white"
+                  className="modern-tab-trigger tab-variant-rose"
                 >
                   Analytics
                 </TabsTrigger>
                 <TabsTrigger 
                   value="insights"
-                  className="data-[state=active]:bg-indigo-500 data-[state=active]:text-white"
+                  className="modern-tab-trigger tab-variant-purple"
                 >
                   Insights
                 </TabsTrigger>
