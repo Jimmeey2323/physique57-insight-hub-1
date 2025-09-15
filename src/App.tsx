@@ -10,6 +10,7 @@ import { UniversalLoader } from "@/components/ui/UniversalLoader";
 import { GlobalLoader } from "@/components/ui/GlobalLoader";
 import { usePerformanceOptimization } from "@/hooks/usePerformanceOptimization";
 import { GlobalFiltersProvider } from "@/contexts/GlobalFiltersContext";
+import ErrorBoundary from "@/components/ErrorBoundary";
 
 // Lazy load pages for better performance
 const Index = React.lazy(() => import("./pages/Index"));
@@ -30,19 +31,21 @@ const NotFound = React.lazy(() => import("./pages/NotFound"));
 const queryClient = new QueryClient();
 
 const App = () => {
+  console.log('App component starting to render');
   usePerformanceOptimization();
   
   return (
-    <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <GlobalFiltersProvider>
-          <GlobalNoteTaker />
-          <GlobalLoader />
-          <Suspense fallback={<UniversalLoader variant="default" subtitle="Loading page..." />}>
-            <Routes>
+    <ErrorBoundary>
+      <QueryClientProvider client={queryClient}>
+        <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <GlobalFiltersProvider>
+            <GlobalNoteTaker />
+            <GlobalLoader />
+            <Suspense fallback={<UniversalLoader variant="default" subtitle="Loading page..." />}>
+              <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/executive-summary" element={<ExecutiveSummary />} />
               <Route path="/sales-analytics" element={<SalesAnalytics />} />
@@ -64,6 +67,7 @@ const App = () => {
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
+  </ErrorBoundary>
   );
 };
 
