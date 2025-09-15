@@ -101,12 +101,13 @@ export default defineConfig(({ mode }) => ({
     },
     chunkSizeWarningLimit: 1000,
     reportCompressedSize: true,
-    target: 'esnext',
+    target: 'es2015',
   },
   optimizeDeps: {
     include: [
       'react',
       'react-dom',
+      'react/jsx-runtime',
       'react-router-dom',
       'recharts',
       'date-fns',
