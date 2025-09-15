@@ -376,7 +376,7 @@ const ClientRetention = () => {
             type: 'month'
           })} />}
 
-            {activeTable === 'monthonmonth' && <ClientConversionMonthOnMonthTable data={filteredData} onRowClick={rowData => setDrillDownModal({
+            {activeTable === 'monthonmonth' && <ClientConversionMonthOnMonthTable data={data} onRowClick={rowData => setDrillDownModal({
             isOpen: true,
             client: null,
             title: `${rowData.month} Analysis`,
@@ -384,7 +384,7 @@ const ClientRetention = () => {
             type: 'month'
           })} />}
 
-            {activeTable === 'yearonyear' && <ClientConversionYearOnYearTable data={filteredData} onRowClick={rowData => setDrillDownModal({
+            {activeTable === 'yearonyear' && <ClientConversionYearOnYearTable data={data} onRowClick={rowData => setDrillDownModal({
             isOpen: true,
             client: null,
             title: `${rowData.month} Year Comparison`,

@@ -71,14 +71,8 @@ export const ClientConversionMonthOnMonthByTypeTable: React.FC<ClientConversionM
         month: 'short',
         year: 'numeric'
       });
-      const clientType = (() => {
-        const isNewValue = String(client.isNew || '').toLowerCase();
-        if (isNewValue.includes('new')) {
-          return 'New Members';
-        } else {
-          return 'Existing Members';
-        }
-      })();
+      // Use the actual raw value from isNew column as requested
+      const clientType = client.isNew || 'Unknown';
 
       // Create unique key for month + type combination
       const key = `${monthKey}-${clientType}`;
