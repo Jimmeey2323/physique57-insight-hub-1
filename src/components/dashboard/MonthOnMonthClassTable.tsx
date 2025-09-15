@@ -14,6 +14,7 @@ import {
 import { SessionData } from '@/hooks/useSessionsData';
 import { formatCurrency, formatNumber, formatPercentage } from '@/utils/formatters';
 import { cn } from '@/lib/utils';
+import { getTableHeaderClasses } from '@/utils/colorThemes';
 
 interface MonthOnMonthClassTableProps {
   data: SessionData[]; // This should be ALL data, ignoring current date filters
@@ -389,11 +390,11 @@ export const MonthOnMonthClassTable: React.FC<MonthOnMonthClassTableProps> = ({
             >
               <div className="overflow-x-auto max-h-[600px] overflow-y-auto">
                 <Table>
-                  <TableHeader className="sticky top-0 bg-gradient-to-r from-slate-100 to-purple-50 z-20 shadow-sm border-b-2 border-purple-200">
+                  <TableHeader className={`sticky top-0 z-20 shadow-sm border-b-2 ${getTableHeaderClasses('attendance')}`}>
                     <TableRow>
-                      <TableHead className="min-w-[200px] sticky left-0 bg-gradient-to-r from-slate-100 to-purple-50 border-r border-purple-200 font-bold text-slate-900">
+                      <TableHead className={`min-w-[200px] sticky left-0 border-r font-bold ${getTableHeaderClasses('attendance')}`}>
                         <div className="flex items-center gap-2">
-                          <Activity className="w-4 h-4 text-purple-600" />
+                          <Activity className="w-4 h-4 text-white" />
                           {groupBy === 'trainer' ? 'Trainer' : 
                            groupBy === 'class' ? 'Class' :
                            groupBy === 'location' ? 'Location' :
@@ -403,7 +404,7 @@ export const MonthOnMonthClassTable: React.FC<MonthOnMonthClassTableProps> = ({
                   </TableHead>
                   
                   {availableMonths.map(month => (
-                    <TableHead key={month.key} className="text-center min-w-[120px] font-bold text-slate-900 bg-slate-100">
+                    <TableHead key={month.key} className={`text-center min-w-[120px] font-bold ${getTableHeaderClasses('attendance')}`}>
                       <div className="space-y-1">
                         <div className="font-semibold">{month.shortLabel}</div>
                         {showGrowthRate && (

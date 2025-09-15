@@ -8,10 +8,11 @@ import { ModernDataTable } from '@/components/ui/ModernDataTable';
 
 interface ClientConversionYearOnYearTableProps {
   data: NewClientData[];
+  visitsSummary?: Record<string, number>;
   onRowClick?: (monthData: any) => void;
 }
 
-export const ClientConversionYearOnYearTable: React.FC<ClientConversionYearOnYearTableProps> = ({ data, onRowClick }) => {
+export const ClientConversionYearOnYearTable: React.FC<ClientConversionYearOnYearTableProps> = ({ data, visitsSummary, onRowClick }) => {
   const yearOnYearData = React.useMemo(() => {
     const currentYear = new Date().getFullYear();
     const previousYear = currentYear - 1;
@@ -32,8 +33,8 @@ export const ClientConversionYearOnYearTable: React.FC<ClientConversionYearOnYea
       acc[month.key] = {
         month: month.monthName,
         sortOrder: month.monthNumber,
-        currentYear: { totalMembers: 0, newMembers: 0, converted: 0, retained: 0, totalLTV: 0, clients: [] },
-        previousYear: { totalMembers: 0, newMembers: 0, converted: 0, retained: 0, totalLTV: 0, clients: [] }
+        currentYear: { totalMembers: 0, visits: 0, newMembers: 0, converted: 0, retained: 0, totalLTV: 0, clients: [] },
+        previousYear: { totalMembers: 0, visits: 0, newMembers: 0, converted: 0, retained: 0, totalLTV: 0, clients: [] }
       };
       return acc;
     }, {} as Record<string, any>);
@@ -92,6 +93,21 @@ export const ClientConversionYearOnYearTable: React.FC<ClientConversionYearOnYea
       }
     });
 
+    // Populate visits data from visitsSummary
+    if (visitsSummary) {
+      Object.values(monthlyStats).forEach((stat: any) => {
+        const currentYear = new Date().getFullYear();
+        const previousYear = currentYear - 1;
+        
+        // Format: "Jan 2024", "Jan 2023", etc.
+        const currentYearKey = `${stat.month} ${currentYear}`;
+        const previousYearKey = `${stat.month} ${previousYear}`;
+        
+        stat.currentYear.visits = visitsSummary[currentYearKey] || 0;
+        stat.previousYear.visits = visitsSummary[previousYearKey] || 0;
+      });
+    }
+
     return Object.values(monthlyStats)
       .map((stat: any) => {
         const currentConversionRate = stat.currentYear.newMembers > 0 ? (stat.currentYear.converted / stat.currentYear.newMembers) * 100 : 0;
@@ -104,6 +120,9 @@ export const ClientConversionYearOnYearTable: React.FC<ClientConversionYearOnYea
         return {
           month: stat.month,
           sortOrder: stat.sortOrder,
+          currentVisits: stat.currentYear.visits,
+          previousVisits: stat.previousYear.visits,
+          visitsGrowth: stat.previousYear.visits > 0 ? ((stat.currentYear.visits - stat.previousYear.visits) / stat.previousYear.visits) * 100 : 0,
           currentTotalMembers: stat.currentYear.totalMembers,
           previousTotalMembers: stat.previousYear.totalMembers,
           totalMembersGrowth: stat.previousYear.totalMembers > 0 ? ((stat.currentYear.totalMembers - stat.previousYear.totalMembers) / stat.previousYear.totalMembers) * 100 : 0,
@@ -137,6 +156,28 @@ export const ClientConversionYearOnYearTable: React.FC<ClientConversionYearOnYea
       key: 'month' as const,
       header: 'Month',
       className: 'font-semibold min-w-[80px]'
+    },
+    {
+      key: 'currentVisits' as const,
+      header: `${new Date().getFullYear()} Visits`,
+      align: 'center' as const,
+      render: (value: number) => <span className="text-base font-bold text-cyan-600">{formatNumber(value)}</span>
+    },
+    {
+      key: 'previousVisits' as const,
+      header: `${new Date().getFullYear() - 1} Visits`,
+      align: 'center' as const,
+      render: (value: number) => <span className="text-base font-bold text-slate-600">{formatNumber(value)}</span>
+    },
+    {
+      key: 'visitsGrowth' as const,
+      header: 'Visits Growth %',
+      align: 'center' as const,
+      render: (value: number) => (
+        <span className={`text-base font-bold ${(value || 0) > 0 ? 'text-green-600' : (value || 0) < 0 ? 'text-red-600' : 'text-slate-600'}`}>
+          {(value || 0) > 0 ? '+' : ''}{(value || 0).toFixed(1)}%
+        </span>
+      )
     },
     {
       key: 'currentTotalMembers' as const,

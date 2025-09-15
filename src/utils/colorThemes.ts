@@ -63,17 +63,17 @@ export const colorThemes: Record<string, ColorTheme> = {
   
   retention: {
     name: 'Client Retention',
-    heroGradient: 'from-gray-900 via-emerald-900 to-gray-800',
-    activeTabGradient: 'from-green-600 to-emerald-700',
+    heroGradient: 'from-gray-900 via-purple-900 to-gray-800',
+    activeTabGradient: 'from-purple-600 to-violet-700',
     accentColors: {
-      primary: 'green-600',
-      secondary: 'emerald-500',
-      light: 'green-100',
-      dark: 'green-800'
+      primary: 'purple-600',
+      secondary: 'violet-500',
+      light: 'purple-100',
+      dark: 'purple-800'
     },
-    metricCardBorder: 'border-green-200',
-    tableHeaderGradient: 'from-green-700 to-emerald-800',
-    badgeColors: 'bg-green-100 text-green-800'
+    metricCardBorder: 'border-purple-200',
+    tableHeaderGradient: 'from-purple-700 to-violet-800',
+    badgeColors: 'bg-purple-100 text-purple-800'
   },
   
   attendance: {

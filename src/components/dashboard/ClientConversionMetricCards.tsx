@@ -54,23 +54,13 @@ export const ClientConversionMetricCards: React.FC<ClientConversionMetricCardsPr
   const totalLTV = data.reduce((sum, client) => sum + (client.ltv || 0), 0);
   const avgLTV = totalClients > 0 ? totalLTV / totalClients : 0;
   
-  // Calculate average conversion time from first purchase date - first visit date
+  // Calculate average conversion time using conversionSpan field
   const convertedClientsWithTime = data.filter(client => 
-    client.conversionStatus === 'Converted' && client.firstPurchase && client.firstVisitDate
+    client.conversionStatus === 'Converted' && client.conversionSpan && client.conversionSpan > 0
   );
   
   const avgConversionTime = convertedClientsWithTime.length > 0 
-    ? convertedClientsWithTime.reduce((sum, client) => {
-        // Calculate conversion span: first purchase date - first visit date
-        const firstVisit = new Date(client.firstVisitDate);
-        const firstPurchase = new Date(client.firstPurchase);
-        if (!isNaN(firstVisit.getTime()) && !isNaN(firstPurchase.getTime())) {
-          const diffTime = firstPurchase.getTime() - firstVisit.getTime();
-          const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-          return sum + Math.max(0, diffDays);
-        }
-        return sum;
-      }, 0) / convertedClientsWithTime.length 
+    ? convertedClientsWithTime.reduce((sum, client) => sum + client.conversionSpan, 0) / convertedClientsWithTime.length 
     : 0;
 
   const metrics = [
@@ -187,11 +177,12 @@ export const ClientConversionMetricCards: React.FC<ClientConversionMetricCardsPr
           key={metric.title} 
           className="group relative overflow-hidden bg-white border border-slate-200 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 cursor-pointer"
           onClick={() => onCardClick?.(metric.title, metric.filterData(), metric.metricType)}
+          style={{ backgroundColor: 'white' }} // Force white background
         >
           {/* Clean white background with subtle gradient accent */}
           <div className={`absolute inset-0 bg-gradient-to-br ${metric.gradient} opacity-3 group-hover:opacity-8 transition-opacity duration-300`}></div>
           
-          <CardContent className="relative p-6 z-10">
+          <CardContent className="relative p-6 z-10 bg-white" style={{ backgroundColor: 'white', color: '#1e293b' }}>
             <div className="flex items-center justify-between mb-4">
               <div className={`p-3 rounded-xl bg-gradient-to-br ${metric.gradient} shadow-lg group-hover:scale-110 transition-transform duration-300`}>
                 <metric.icon className="w-6 h-6 text-white" />
@@ -216,15 +207,15 @@ export const ClientConversionMetricCards: React.FC<ClientConversionMetricCardsPr
             </div>
             
             <div className="space-y-3">
-              <h3 className="text-sm font-semibold text-slate-700 group-hover:text-slate-800 transition-colors">
+              <h3 className="text-sm font-semibold text-slate-700 group-hover:text-slate-800 transition-colors" style={{ color: '#334155' }}>
                 {metric.title}
               </h3>
               <div className="flex items-baseline gap-2">
-                <span className="text-3xl font-bold text-slate-900 group-hover:text-slate-800 transition-colors">
+                <span className="text-3xl font-bold text-slate-900 group-hover:text-slate-800 transition-colors" style={{ color: '#0f172a' }}>
                   {metric.value}
                 </span>
               </div>
-              <p className="text-xs text-slate-500 group-hover:text-slate-600 transition-colors leading-relaxed">
+              <p className="text-xs text-slate-500 group-hover:text-slate-600 transition-colors leading-relaxed" style={{ color: '#64748b' }}>
                 {metric.description}
               </p>
               

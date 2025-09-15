@@ -1,6 +1,18 @@
 
 import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, Car      monthlyStats[monthKey] = {
+        month: monthName,
+        sortKey: monthKey,
+        totalMembers: 0,
+        visits: 0, // Will be populated from visitsSummary
+        newMembers: 0,
+        converted: 0,
+        retained: 0,
+        totalLTV: 0,
+        conversionIntervals: [],
+        visitsPostTrial: [],
+        clients: []
+      };rdHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Calendar, TrendingUp, TrendingDown } from 'lucide-react';
 import { formatCurrency, formatNumber } from '@/utils/formatters';
@@ -10,10 +22,11 @@ import { motion } from 'framer-motion';
 
 interface ClientConversionMonthOnMonthTableProps {
   data: NewClientData[];
+  visitsSummary?: Record<string, number>;
   onRowClick?: (monthData: any) => void;
 }
 
-export const ClientConversionMonthOnMonthTable: React.FC<ClientConversionMonthOnMonthTableProps> = ({ data, onRowClick }) => {
+export const ClientConversionMonthOnMonthTable: React.FC<ClientConversionMonthOnMonthTableProps> = ({ data, visitsSummary, onRowClick }) => {
   console.log('MonthOnMonth data:', data.length, 'records');
 
   const monthlyData = React.useMemo(() => {
@@ -112,17 +125,9 @@ export const ClientConversionMonthOnMonthTable: React.FC<ClientConversionMonthOn
         // Sum LTV
         monthlyStats[monthKey].totalLTV += client.ltv || 0;
         
-        // Calculate conversion interval (first purchase date - first visit date)
-        if (client.firstPurchase && client.firstVisitDate) {
-          const firstVisitDate = new Date(client.firstVisitDate);
-          const firstPurchaseDate = new Date(client.firstPurchase);
-          
-          if (!isNaN(firstVisitDate.getTime()) && !isNaN(firstPurchaseDate.getTime())) {
-            const intervalDays = Math.ceil((firstPurchaseDate.getTime() - firstVisitDate.getTime()) / (1000 * 60 * 60 * 24));
-            if (intervalDays >= 0) {
-              monthlyStats[monthKey].conversionIntervals.push(intervalDays);
-            }
-          }
+        // Use conversionSpan field for conversion interval
+        if (client.conversionSpan && client.conversionSpan > 0) {
+          monthlyStats[monthKey].conversionIntervals.push(client.conversionSpan);
         }
         
         if (client.visitsPostTrial && client.visitsPostTrial > 0) {
@@ -130,6 +135,20 @@ export const ClientConversionMonthOnMonthTable: React.FC<ClientConversionMonthOn
         }
       }
     });
+
+    // Populate visits data from visitsSummary
+    if (visitsSummary) {
+      Object.keys(monthlyStats).forEach(monthKey => {
+        const stat = monthlyStats[monthKey];
+        // Convert monthKey format from "2024-01" to "Jan 2024" to match visitsSummary format
+        const [year, month] = monthKey.split('-');
+        const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        const monthName = monthNames[parseInt(month) - 1];
+        const summaryKey = `${monthName} ${year}`;
+        
+        stat.visits = visitsSummary[summaryKey] || 0;
+      });
+    }
 
     const processed = Object.values(monthlyStats)
       .map((stat: any) => ({
@@ -163,8 +182,16 @@ export const ClientConversionMonthOnMonthTable: React.FC<ClientConversionMonthOn
       )
     },
     {
+      key: 'visits',
+      header: 'Visits',
+      align: 'center' as const,
+      render: (value: number) => (
+        <span className="text-base font-bold text-cyan-600">{formatNumber(value)}</span>
+      )
+    },
+    {
       key: 'totalMembers',
-      header: 'Total Members',
+      header: 'Trials',
       align: 'center' as const,
       render: (value: number) => (
         <span className="text-base font-bold text-blue-600">{formatNumber(value)}</span>
@@ -179,24 +206,6 @@ export const ClientConversionMonthOnMonthTable: React.FC<ClientConversionMonthOn
       )
     },
     {
-      key: 'converted',
-      header: 'Converted',
-      align: 'center' as const,
-      render: (value: number) => (
-        <span className="text-base font-bold text-emerald-600">{formatNumber(value)}</span>
-      )
-    },
-    {
-      key: 'conversionRate',
-      header: 'Conv. Rate',
-      align: 'center' as const,
-      render: (value: number) => (
-        <span className={`text-base font-bold ${value > 25 ? 'text-green-600' : value < 10 ? 'text-red-600' : 'text-slate-600'}`}>
-          {value.toFixed(1)}%
-        </span>
-      )
-    },
-    {
       key: 'retained',
       header: 'Retained',
       align: 'center' as const,
@@ -206,7 +215,7 @@ export const ClientConversionMonthOnMonthTable: React.FC<ClientConversionMonthOn
     },
     {
       key: 'retentionRate',
-      header: 'Ret. Rate',
+      header: 'Retention %',
       align: 'center' as const,
       render: (value: number) => (
         <span className={`text-base font-bold ${value > 70 ? 'text-purple-600' : value < 40 ? 'text-red-600' : 'text-slate-600'}`}>
@@ -215,11 +224,21 @@ export const ClientConversionMonthOnMonthTable: React.FC<ClientConversionMonthOn
       )
     },
     {
-      key: 'totalLTV',
-      header: 'Total LTV',
-      align: 'right' as const,
+      key: 'converted',
+      header: 'Converted',
+      align: 'center' as const,
       render: (value: number) => (
-        <span className="text-base font-bold text-emerald-600">{formatCurrency(value)}</span>
+        <span className="text-base font-bold text-emerald-600">{formatNumber(value)}</span>
+      )
+    },
+    {
+      key: 'conversionRate',
+      header: 'Conversion %',
+      align: 'center' as const,
+      render: (value: number) => (
+        <span className={`text-base font-bold ${value > 25 ? 'text-green-600' : value < 10 ? 'text-red-600' : 'text-slate-600'}`}>
+          {value.toFixed(1)}%
+        </span>
       )
     },
     {
@@ -232,7 +251,7 @@ export const ClientConversionMonthOnMonthTable: React.FC<ClientConversionMonthOn
     },
     {
       key: 'avgConversionInterval',
-      header: 'Conv. Days',
+      header: 'Avg Conv Days',
       align: 'center' as const,
       render: (value: number) => (
         <span className="text-base font-bold text-orange-600">{Math.round(value)}</span>

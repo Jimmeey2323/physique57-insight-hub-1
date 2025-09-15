@@ -1,5 +1,7 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { useNewClientData } from '@/hooks/useNewClientData';
+import { useSessionsData } from '@/hooks/useSessionsData';
+import { usePayrollData } from '@/hooks/usePayrollData';
 import { useGlobalLoading } from '@/hooks/useGlobalLoading';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -30,6 +32,14 @@ const ClientRetention = () => {
     data,
     loading
   } = useNewClientData();
+  const {
+    data: sessionsData,
+    loading: sessionsLoading
+  } = useSessionsData();
+  const {
+    data: payrollData,
+    isLoading: payrollLoading
+  } = usePayrollData();
   const {
     isLoading,
     setLoading
@@ -62,8 +72,24 @@ const ClientRetention = () => {
     };
   });
   useEffect(() => {
-    setLoading(loading, 'Analyzing client conversion and retention patterns...');
-  }, [loading, setLoading]);
+    setLoading(loading || sessionsLoading || payrollLoading, 'Analyzing client conversion and retention patterns...');
+  }, [loading, sessionsLoading, payrollLoading, setLoading]);
+
+  // Create visits summary from payroll data (sum of totalCustomers by month/year and location)
+  const visitsSummary = useMemo(() => {
+    if (!payrollData || payrollData.length === 0) return {};
+    
+    const summary: Record<string, number> = {};
+    payrollData.forEach(payroll => {
+      if (payroll.monthYear && payroll.totalCustomers) {
+        // Use monthYear directly as key (should be in format like "Jan 2024")
+        const key = payroll.monthYear;
+        summary[key] = (summary[key] || 0) + payroll.totalCustomers;
+      }
+    });
+    
+    return summary;
+  }, [payrollData]);
 
   // Get unique values for filters (only 3 main locations)
   const uniqueLocations = React.useMemo(() => {
@@ -366,7 +392,10 @@ const ClientRetention = () => {
 
           {/* Selected Data Table */}
           <div className="space-y-8">
-            {activeTable === 'monthonmonthbytype' && <ClientConversionMonthOnMonthByTypeTable data={filteredData} onRowClick={rowData => setDrillDownModal({
+            {activeTable === 'monthonmonthbytype' && <ClientConversionMonthOnMonthByTypeTable 
+              data={filteredData} 
+              visitsSummary={visitsSummary}
+              onRowClick={rowData => setDrillDownModal({
             isOpen: true,
             client: null,
             title: `${rowData.month} - ${rowData.type} Analysis`,
@@ -374,7 +403,10 @@ const ClientRetention = () => {
             type: 'month'
           })} />}
 
-            {activeTable === 'monthonmonth' && <ClientConversionMonthOnMonthTable data={data} onRowClick={rowData => setDrillDownModal({
+            {activeTable === 'monthonmonth' && <ClientConversionMonthOnMonthTable 
+              data={data} 
+              visitsSummary={visitsSummary}
+              onRowClick={rowData => setDrillDownModal({
             isOpen: true,
             client: null,
             title: `${rowData.month} Analysis`,
@@ -382,7 +414,10 @@ const ClientRetention = () => {
             type: 'month'
           })} />}
 
-            {activeTable === 'yearonyear' && <ClientConversionYearOnYearTable data={data} onRowClick={rowData => setDrillDownModal({
+            {activeTable === 'yearonyear' && <ClientConversionYearOnYearTable 
+              data={data} 
+              visitsSummary={visitsSummary}
+              onRowClick={rowData => setDrillDownModal({
             isOpen: true,
             client: null,
             title: `${rowData.month} Year Comparison`,

@@ -20,10 +20,8 @@ import {
   Users, 
   Eye, 
   Zap, 
-  Dumbbell,
   Target,
   Sparkles,
-  Settings,
   Filter
 } from 'lucide-react';
 
@@ -138,7 +136,7 @@ export const PowerCycleBarreStrengthComprehensiveSection: React.FC<PowerCycleBar
     <div className="space-y-8 p-6 bg-gradient-to-br from-cyan-50/50 via-white to-teal-50/30 min-h-screen">
       {/* Modern Header with Analytics Summary */}
       <div className="relative overflow-hidden">
-        <Card className={`${theme.heroGradient} border-0 shadow-2xl backdrop-blur-sm`}>
+        <Card className={`bg-gradient-to-r ${theme.heroGradient} border-0 shadow-2xl backdrop-blur-sm`}>
           <CardHeader className="relative pb-8">
             <div className="absolute inset-0 bg-black/10 backdrop-blur-sm"></div>
             <div className="relative z-10">
@@ -203,7 +201,7 @@ export const PowerCycleBarreStrengthComprehensiveSection: React.FC<PowerCycleBar
       {/* Main Content Tabs with Modern Design */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <Card className="bg-gradient-to-br from-white via-cyan-50/30 to-teal-50/20 border-0 shadow-xl backdrop-blur-sm">
-          <CardHeader className={`${theme.heroGradient} text-white relative overflow-hidden`}>
+          <CardHeader className={`bg-gradient-to-r ${theme.heroGradient} text-white relative overflow-hidden`}>
             <div className="absolute inset-0 bg-gradient-to-r from-black/10 to-transparent"></div>
             <CardTitle className="text-xl font-bold flex items-center gap-3 relative z-10">
                 <div className={`w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-sm`}>
