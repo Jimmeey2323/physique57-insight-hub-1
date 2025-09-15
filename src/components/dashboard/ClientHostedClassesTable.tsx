@@ -13,24 +13,72 @@ interface ClientHostedClassesTableProps {
 }
 
 export const ClientHostedClassesTable: React.FC<ClientHostedClassesTableProps> = ({ data, onRowClick }) => {
+  // Early return if no data
+  if (!data || data.length === 0) {
+    return (
+      <Card className="bg-white shadow-xl border-0 overflow-hidden">
+        <CardHeader className="border-b border-gray-100 bg-gradient-to-r from-purple-600 to-pink-600 text-white">
+          <CardTitle className="flex items-center gap-2">
+            <Dumbbell className="w-5 h-5" />
+            Hosted Classes Performance Analysis
+            <Badge variant="secondary" className="bg-white/20 text-white">
+              0 Classes
+            </Badge>
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="p-6">
+          <p className="text-gray-500 text-center">No class data available for analysis.</p>
+        </CardContent>
+      </Card>
+    );
+  }
+
   const hostedClassData = React.useMemo(() => {
-    const classStats = data.reduce((acc, client) => {
+    // Filter data to only include hosted classes based on class name
+    const filteredData = data.filter(client => {
+      if (!client || !client.firstVisitEntityName) return false;
+      
+      const className = client.firstVisitEntityName.toLowerCase();
+      
+      // Check for "host", "hosted", or "sign up" as substring matches
+      const hasHostKeywords = className.includes('host') || 
+                             className.includes('hosted') || 
+                             className.includes('sign up');
+      
+      // Check for "x" as a whole word using word boundaries
+      const hasStandaloneX = /\bx\b/.test(className);
+      
+      const isHostedClass = hasHostKeywords || hasStandaloneX;
+      
+      return isHostedClass;
+    });
+
+    console.log(`Hosted Classes Filter: ${data.length} total records, ${filteredData.length} hosted class records`);
+
+    const classStats = filteredData.reduce((acc, client) => {
+      // Safety checks for client data
+      if (!client) return acc;
+      
       const className = client.firstVisitEntityName || 'Unknown Class';
       
       // Parse date properly from "01/01/2020, 17:30:00" format
       let month = 'Unknown';
       if (client.firstVisitDate) {
-        let date: Date;
-        if (client.firstVisitDate.includes('/')) {
-          const datePart = client.firstVisitDate.split(',')[0].trim();
-          const [day, monthNum, year] = datePart.split('/');
-          date = new Date(parseInt(year), parseInt(monthNum) - 1, parseInt(day));
-        } else {
-          date = new Date(client.firstVisitDate);
-        }
-        
-        if (!isNaN(date.getTime())) {
-          month = date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+        try {
+          let date: Date;
+          if (client.firstVisitDate.includes('/')) {
+            const datePart = client.firstVisitDate.split(',')[0].trim();
+            const [day, monthNum, year] = datePart.split('/');
+            date = new Date(parseInt(year), parseInt(monthNum) - 1, parseInt(day));
+          } else {
+            date = new Date(client.firstVisitDate);
+          }
+          
+          if (!isNaN(date.getTime())) {
+            month = date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+          }
+        } catch (error) {
+          console.warn('Error parsing date:', client.firstVisitDate, error);
         }
       }
       
@@ -70,16 +118,20 @@ export const ClientHostedClassesTable: React.FC<ClientHostedClassesTableProps> =
       
       acc[key].totalLTV += client.ltv || 0;
       
-      // Calculate conversion interval
+      // Calculate conversion interval with safety checks
       if (client.firstPurchase && client.firstVisitDate) {
-        const firstVisitDate = new Date(client.firstVisitDate);
-        const firstPurchaseDate = new Date(client.firstPurchase);
-        
-        if (!isNaN(firstVisitDate.getTime()) && !isNaN(firstPurchaseDate.getTime())) {
-          const intervalDays = Math.ceil((firstPurchaseDate.getTime() - firstVisitDate.getTime()) / (1000 * 60 * 60 * 24));
-          if (intervalDays >= 0) {
-            acc[key].conversionIntervals.push(intervalDays);
+        try {
+          const firstVisitDate = new Date(client.firstVisitDate);
+          const firstPurchaseDate = new Date(client.firstPurchase);
+          
+          if (!isNaN(firstVisitDate.getTime()) && !isNaN(firstPurchaseDate.getTime())) {
+            const intervalDays = Math.ceil((firstPurchaseDate.getTime() - firstVisitDate.getTime()) / (1000 * 60 * 60 * 24));
+            if (intervalDays >= 0) {
+              acc[key].conversionIntervals.push(intervalDays);
+            }
           }
+        } catch (error) {
+          console.warn('Error calculating conversion interval:', error);
         }
       }
       
@@ -157,14 +209,17 @@ export const ClientHostedClassesTable: React.FC<ClientHostedClassesTableProps> =
       key: 'retentionRate',
       header: 'Retention %',
       align: 'center' as const,
-      render: (value: number) => (
-        <div className="flex items-center justify-center gap-1">
-          {value > 70 ? <TrendingUp className="w-3 h-3 text-green-500" /> : value < 50 ? <TrendingDown className="w-3 h-3 text-red-500" /> : null}
-          <Badge className={`font-bold ${value > 70 ? 'bg-green-100 text-green-800' : value < 50 ? 'bg-red-100 text-red-800' : 'bg-gray-100 text-gray-800'}`}>
-            {value.toFixed(1)}%
-          </Badge>
-        </div>
-      )
+      render: (value: number) => {
+        const safeValue = value ?? 0;
+        return (
+          <div className="flex items-center justify-center gap-1">
+            {safeValue > 70 ? <TrendingUp className="w-3 h-3 text-green-500" /> : safeValue < 50 ? <TrendingDown className="w-3 h-3 text-red-500" /> : null}
+            <Badge className={`font-bold ${safeValue > 70 ? 'bg-green-100 text-green-800' : safeValue < 50 ? 'bg-red-100 text-red-800' : 'bg-gray-100 text-gray-800'}`}>
+              {safeValue.toFixed(1)}%
+            </Badge>
+          </div>
+        );
+      }
     },
     {
       key: 'converted',
@@ -181,14 +236,17 @@ export const ClientHostedClassesTable: React.FC<ClientHostedClassesTableProps> =
       key: 'conversionRate',
       header: 'Conversion %',
       align: 'center' as const,
-      render: (value: number) => (
-        <div className="flex items-center justify-center gap-1">
-          {value > 25 ? <TrendingUp className="w-3 h-3 text-green-500" /> : value < 10 ? <TrendingDown className="w-3 h-3 text-red-500" /> : null}
-          <Badge className={`font-bold ${value > 25 ? 'bg-green-100 text-green-800' : value < 10 ? 'bg-red-100 text-red-800' : 'bg-gray-100 text-gray-800'}`}>
-            {value.toFixed(1)}%
-          </Badge>
-        </div>
-      )
+      render: (value: number) => {
+        const safeValue = value ?? 0;
+        return (
+          <div className="flex items-center justify-center gap-1">
+            {safeValue > 25 ? <TrendingUp className="w-3 h-3 text-green-500" /> : safeValue < 10 ? <TrendingDown className="w-3 h-3 text-red-500" /> : null}
+            <Badge className={`font-bold ${safeValue > 25 ? 'bg-green-100 text-green-800' : safeValue < 10 ? 'bg-red-100 text-red-800' : 'bg-gray-100 text-gray-800'}`}>
+              {safeValue.toFixed(1)}%
+            </Badge>
+          </div>
+        );
+      }
     },
     {
       key: 'avgLTV',
@@ -205,11 +263,14 @@ export const ClientHostedClassesTable: React.FC<ClientHostedClassesTableProps> =
       key: 'avgConversionInterval',
       header: 'Avg Conv Days',
       align: 'center' as const,
-      render: (value: number) => (
-        <Badge variant="outline" className="bg-orange-50 text-orange-700 border-orange-200 font-bold">
-          {Math.round(value)} days
-        </Badge>
-      )
+      render: (value: number) => {
+        const safeValue = value ?? 0;
+        return (
+          <Badge variant="outline" className="bg-orange-50 text-orange-700 border-orange-200 font-bold">
+            {Math.round(safeValue)} days
+          </Badge>
+        );
+      }
     }
   ];
 

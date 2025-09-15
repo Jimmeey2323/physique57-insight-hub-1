@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { TrendingUp, TrendingDown, Percent, ShoppingCart, CreditCard, DollarSign, Target, Activity, Users, ArrowUpRight, ArrowDownRight } from 'lucide-react';
@@ -26,24 +26,27 @@ export const DiscountsAnimatedMetricCards: React.FC<DiscountsAnimatedMetricCards
   data, 
   onMetricClick 
 }) => {
-  // Calculate discount-specific metrics
-  const totalDiscounts = data.reduce((sum, item) => sum + (item.discountAmount || 0), 0);
-  const totalRevenue = data.reduce((sum, item) => sum + (item.paymentValue || 0), 0);
-  const totalTransactions = data.length;
-  const discountedTransactions = data.filter(item => (item.discountAmount || 0) > 0).length;
-  const uniqueCustomers = new Set(data.map(item => item.memberId || item.customerEmail)).size;
-  const customersWithDiscounts = new Set(
-    data.filter(item => (item.discountAmount || 0) > 0)
-        .map(item => item.memberId || item.customerEmail)
-  ).size;
-  
-  const discountRate = totalRevenue > 0 ? (totalDiscounts / (totalRevenue + totalDiscounts)) * 100 : 0;
-  const discountPenetration = totalTransactions > 0 ? (discountedTransactions / totalTransactions) * 100 : 0;
-  const customerDiscountPenetration = uniqueCustomers > 0 ? (customersWithDiscounts / uniqueCustomers) * 100 : 0;
-  const avgDiscountPerTransaction = discountedTransactions > 0 ? totalDiscounts / discountedTransactions : 0;
-  const avgDiscountPerCustomer = customersWithDiscounts > 0 ? totalDiscounts / customersWithDiscounts : 0;
+  // Memoize expensive calculations to prevent recalculation on every render
+  const calculatedMetrics = useMemo(() => {
+    // Calculate discount-specific metrics
+    const totalDiscounts = data.reduce((sum, item) => sum + (item.discountAmount || 0), 0);
+    const totalRevenue = data.reduce((sum, item) => sum + (item.paymentValue || 0), 0);
+    const totalTransactions = data.length;
+    const discountedTransactions = data.filter(item => (item.discountAmount || 0) > 0).length;
+    const uniqueCustomers = new Set(data.map(item => item.memberId || item.customerEmail)).size;
+    const customersWithDiscounts = new Set(
+      data.filter(item => (item.discountAmount || 0) > 0)
+          .map(item => item.memberId || item.customerEmail)
+    ).size;
+    
+    const discountRate = totalRevenue > 0 ? (totalDiscounts / (totalRevenue + totalDiscounts)) * 100 : 0;
+    const discountPenetration = totalTransactions > 0 ? (discountedTransactions / totalTransactions) * 100 : 0;
+    const customerDiscountPenetration = uniqueCustomers > 0 ? (customersWithDiscounts / uniqueCustomers) * 100 : 0;
+    const avgDiscountPerTransaction = discountedTransactions > 0 ? totalDiscounts / discountedTransactions : 0;
+    const avgDiscountPerCustomer = customersWithDiscounts > 0 ? totalDiscounts / customersWithDiscounts : 0;
 
-  const metrics = [
+    return {
+      metrics: [
     {
       title: 'Total Discounts',
       value: formatCurrency(totalDiscounts),
@@ -98,7 +101,20 @@ export const DiscountsAnimatedMetricCards: React.FC<DiscountsAnimatedMetricCards
       trend: 'neutral' as 'up' | 'down' | 'neutral',
       color: 'orange'
     }
-  ];
+      ],
+      // Return the calculated values for use in handleMetricClick
+      totalRevenue,
+      totalDiscounts,
+      totalTransactions,
+      discountedTransactions,
+      uniqueCustomers,
+      customersWithDiscounts,
+      discountRate,
+      discountPenetration
+    };
+  }, [data]); // Add dependency array for useMemo
+
+  const { metrics, totalRevenue, totalDiscounts, totalTransactions, discountedTransactions, uniqueCustomers, customersWithDiscounts, discountRate, discountPenetration } = calculatedMetrics;
 
   const handleMetricClick = (metric: any) => {
     if (onMetricClick) {

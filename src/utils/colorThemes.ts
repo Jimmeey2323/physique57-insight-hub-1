@@ -175,7 +175,7 @@ export const getThemeColors = (variant: string): ColorTheme => {
 // Helper function to get CSS classes for active tabs
 export const getActiveTabClasses = (variant: string): string => {
   const theme = getThemeColors(variant);
-  return `data-[state=active]:bg-gradient-to-r data-[state=active]:${theme.activeTabGradient} data-[state=active]:text-white data-[state=active]:shadow-lg`;
+  return `text-slate-600 data-[state=active]:bg-gradient-to-r data-[state=active]:${theme.activeTabGradient} data-[state=active]:text-white data-[state=active]:shadow-lg hover:text-slate-800`;
 };
 
 // Helper function to get table header classes

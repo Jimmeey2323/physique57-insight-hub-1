@@ -13,6 +13,7 @@ import { PowerCycleBarreStrengthInsightsSection } from './PowerCycleBarreStrengt
 import { PowerCycleBarreStrengthDrillDownModal } from './PowerCycleBarreStrengthDrillDownModal';
 import { PayrollData } from '@/types/dashboard';
 import { getThemeColors, getActiveTabClasses } from '@/utils/colorThemes';
+import { getPreviousMonthDateRange } from '@/utils/dateUtils';
 import { 
   BarChart3, 
   Activity, 
@@ -32,9 +33,9 @@ interface PowerCycleBarreStrengthComprehensiveSectionProps {
 export const PowerCycleBarreStrengthComprehensiveSection: React.FC<PowerCycleBarreStrengthComprehensiveSectionProps> = ({ data }) => {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [selectedLocation, setSelectedLocation] = useState('all');
-  const [selectedTimeframe, setSelectedTimeframe] = useState('all');
+  const [selectedPeriod, setSelectedPeriod] = useState('all');
   const [selectedTrainer, setSelectedTrainer] = useState('all');
-  const [dateRange, setDateRange] = useState<{ start: Date | null; end: Date | null }>({ start: null, end: null });
+  
   const [drillDownData, setDrillDownData] = useState<any>(null);
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
 
@@ -47,7 +48,7 @@ export const PowerCycleBarreStrengthComprehensiveSection: React.FC<PowerCycleBar
     
     console.log('PowerCycle filtering - Input data:', data.length, 'items');
     console.log('Sample monthYear formats:', data.slice(0, 5).map(item => item.monthYear));
-    console.log('Filters:', { selectedLocation, selectedTimeframe, selectedTrainer, dateRange });
+    console.log('Filters:', { selectedLocation, selectedPeriod, selectedTrainer });
     
     let filtered = [...data];
     
@@ -61,117 +62,14 @@ export const PowerCycleBarreStrengthComprehensiveSection: React.FC<PowerCycleBar
       filtered = filtered.filter(item => item.teacherName === selectedTrainer);
     }
     
-    // Apply timeframe filter
-    if (selectedTimeframe !== 'all') {
-      if (selectedTimeframe === 'custom' && (dateRange.start || dateRange.end)) {
-        filtered = filtered.filter(item => {
-          if (!item.monthYear) return false;
-          
-          // Handle different monthYear formats (e.g., "Jan 2024", "January 2024", "2024-01")
-          let itemDate: Date;
-          
-          if (item.monthYear.includes('-')) {
-            // Format: "2024-01"
-            const [year, month] = item.monthYear.split('-');
-            itemDate = new Date(parseInt(year), parseInt(month) - 1, 1);
-          } else {
-            // Format: "Jan 2024" or "January 2024"
-            const [monthName, year] = item.monthYear.split(' ');
-            const fullMonthNames = ['January', 'February', 'March', 'April', 'May', 'June',
-              'July', 'August', 'September', 'October', 'November', 'December'];
-            const shortMonthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-              'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-            
-            let monthIndex = fullMonthNames.indexOf(monthName);
-            if (monthIndex === -1) {
-              monthIndex = shortMonthNames.indexOf(monthName);
-            }
-            
-            if (monthIndex === -1) return false; // Invalid month name
-            
-            itemDate = new Date(parseInt(year), monthIndex, 1);
-          }
-          
-          if (isNaN(itemDate.getTime())) return false; // Invalid date
-          
-          let isInRange = true;
-          
-          if (dateRange.start) {
-            const startDate = new Date(dateRange.start);
-            startDate.setDate(1);
-            startDate.setHours(0, 0, 0, 0);
-            isInRange = isInRange && itemDate >= startDate;
-          }
-          
-          if (dateRange.end) {
-            const endDate = new Date(dateRange.end);
-            endDate.setMonth(endDate.getMonth() + 1, 0);
-            endDate.setHours(23, 59, 59, 999);
-            isInRange = isInRange && itemDate <= endDate;
-          }
-          
-          return isInRange;
-        });
-      } else if (selectedTimeframe !== 'custom') {
-        const now = new Date();
-        let startDate = new Date();
-        
-        switch (selectedTimeframe) {
-          case '3m':
-            startDate.setMonth(now.getMonth() - 3);
-            break;
-          case '6m':
-            startDate.setMonth(now.getMonth() - 6);
-            break;
-          case '1y':
-            startDate.setFullYear(now.getFullYear() - 1);
-            break;
-          default:
-            break;
-        }
-        startDate.setDate(1);
-        startDate.setHours(0, 0, 0, 0);
-        
-        if (selectedTimeframe !== 'all') {
-          filtered = filtered.filter(item => {
-            if (!item.monthYear) return false;
-            
-            // Handle different monthYear formats
-            let itemDate: Date;
-            
-            if (item.monthYear.includes('-')) {
-              // Format: "2024-01"
-              const [year, month] = item.monthYear.split('-');
-              itemDate = new Date(parseInt(year), parseInt(month) - 1, 1);
-            } else {
-              // Format: "Jan 2024" or "January 2024"
-              const [monthName, year] = item.monthYear.split(' ');
-              const fullMonthNames = ['January', 'February', 'March', 'April', 'May', 'June',
-                'July', 'August', 'September', 'October', 'November', 'December'];
-              const shortMonthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-                'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-              
-              let monthIndex = fullMonthNames.indexOf(monthName);
-              if (monthIndex === -1) {
-                monthIndex = shortMonthNames.indexOf(monthName);
-              }
-              
-              if (monthIndex === -1) return false; // Invalid month name
-              
-              itemDate = new Date(parseInt(year), monthIndex, 1);
-            }
-            
-            if (isNaN(itemDate.getTime())) return false; // Invalid date
-            
-            return itemDate >= startDate && itemDate <= now;
-          });
-        }
-      }
+    // Apply period filter - filter by exact monthYear match
+    if (selectedPeriod !== 'all') {
+      filtered = filtered.filter(item => item.monthYear === selectedPeriod);
     }
     
-    console.log('PowerCycle filtering - Output data:', filtered.length, 'items');
+    console.log('PowerCycle filtering - Filtered data:', filtered.length, 'items');
     return filtered;
-  }, [data, selectedLocation, selectedTimeframe, selectedTrainer, dateRange]);
+  }, [data, selectedLocation, selectedPeriod, selectedTrainer]);
 
   const handleItemClick = (item: any) => {
     setDrillDownData(item);
@@ -237,12 +135,10 @@ export const PowerCycleBarreStrengthComprehensiveSection: React.FC<PowerCycleBar
             data={data}
             selectedLocation={selectedLocation}
             onLocationChange={setSelectedLocation}
-            selectedTimeframe={selectedTimeframe}
-            onTimeframeChange={setSelectedTimeframe}
+            selectedPeriod={selectedPeriod}
+            onPeriodChange={setSelectedPeriod}
             selectedTrainer={selectedTrainer}
             onTrainerChange={setSelectedTrainer}
-            dateRange={dateRange}
-            onDateRangeChange={setDateRange}
           />
         </div>
       )}

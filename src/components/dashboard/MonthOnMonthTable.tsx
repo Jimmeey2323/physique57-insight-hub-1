@@ -1,7 +1,7 @@
 import React, { useMemo, useState, useCallback } from 'react';
 import { SalesData, FilterOptions, YearOnYearMetricType } from '@/types/dashboard';
 import { YearOnYearMetricTabs } from './YearOnYearMetricTabs';
-import { formatCurrency, formatNumber } from '@/utils/formatters';
+import { formatCurrency, formatNumber, formatPercentage, formatDiscount } from '@/utils/formatters';
 import { Calendar, TrendingUp, TrendingDown, ChevronDown, ChevronRight, Edit3, Save, X } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -80,6 +80,8 @@ export const MonthOnMonthTable: React.FC<MonthOnMonthTableProps> = ({
         return totalTransactions > 0 ? totalUnits / totalTransactions : 0;
       case 'vat':
         return items.reduce((sum, item) => sum + (item.paymentVAT || 0), 0);
+      case 'netRevenue':
+        return totalRevenue - items.reduce((sum, item) => sum + (item.paymentVAT || 0), 0);
       case 'discountValue':
         return totalDiscount;
       case 'discountPercentage':
@@ -95,7 +97,12 @@ export const MonthOnMonthTable: React.FC<MonthOnMonthTableProps> = ({
       case 'atv':
       case 'asv':
       case 'vat':
+      case 'netRevenue':
         return formatCurrency(value);
+      case 'discountValue':
+        return formatDiscount(value);
+      case 'discountPercentage':
+        return formatPercentage(value);
       case 'transactions':
       case 'members':
       case 'units':
