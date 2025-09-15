@@ -4,6 +4,7 @@ import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { getTableHeaderClasses } from '@/utils/colorThemes';
 import { 
   DollarSign, TrendingUp, TrendingDown, Calendar, User, BarChart3,
   ArrowUpDown, Filter, Download, Eye, Percent, Hash
@@ -335,7 +336,7 @@ export const EnhancedPayrollTable: React.FC<EnhancedPayrollTableProps> = ({ data
         <CardContent className="p-0">
           <div className="overflow-auto max-h-[800px] border rounded-lg">
             <Table>
-              <TableHeader className="sticky top-0 bg-white z-10 border-b-2">
+              <TableHeader className={`sticky top-0 z-10 border-b-2 ${getTableHeaderClasses('analytics')}`}>
                 <TableRow className="hover:bg-transparent">
                   <TableHead 
                     className="font-bold cursor-pointer hover:bg-gray-50 whitespace-nowrap min-w-48 sticky left-0 bg-white z-20"

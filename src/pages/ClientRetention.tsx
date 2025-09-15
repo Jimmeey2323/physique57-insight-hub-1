@@ -5,7 +5,6 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Home, Users } from 'lucide-react';
 import { Footer } from '@/components/ui/footer';
-import { ProfessionalLoader } from '@/components/dashboard/ProfessionalLoader';
 import { AdvancedExportButton } from '@/components/ui/AdvancedExportButton';
 import { Card, CardContent } from '@/components/ui/card';
 import { NewClientFilterOptions } from '@/types/dashboard';
@@ -243,9 +242,8 @@ const ClientRetention = () => {
       };
     });
   }, [filteredData]);
-  if (isLoading) {
-    return <ProfessionalLoader variant="conversion" subtitle="Analyzing client conversion and retention patterns..." />;
-  }
+  
+  // Remove individual loader - rely on global loader only
   console.log('Rendering ClientRetention with data:', data.length, 'records, filtered:', filteredData.length);
   const exportButton = <AdvancedExportButton newClientData={filteredData} defaultFileName={`client-conversion-${selectedLocation.replace(/\s+/g, '-').toLowerCase()}`} size="sm" variant="ghost" />;
   return <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">

@@ -5,6 +5,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { getTableHeaderClasses } from '@/utils/colorThemes';
 import { 
   ChevronDown, ChevronRight, ArrowUpDown, Search, Filter, Calendar, 
   Clock, User, Users, DollarSign, Target, BarChart3, Eye, Hash,
@@ -378,7 +379,7 @@ export const DetailedClassAttendanceTable: React.FC<DetailedClassAttendanceTable
         <CardContent className="p-0">
           <div className="overflow-auto max-h-[800px] border rounded-lg">
             <Table>
-              <TableHeader className="sticky top-0 bg-white z-10 border-b-2">
+              <TableHeader className={`sticky top-0 z-10 border-b-2 ${getTableHeaderClasses('attendance')}`}>
                 <TableRow className="hover:bg-transparent">
                   <TableHead className="w-12"></TableHead>
                   <TableHead 

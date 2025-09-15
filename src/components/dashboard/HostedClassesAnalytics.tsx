@@ -4,6 +4,7 @@ import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { getTableHeaderClasses } from '@/utils/colorThemes';
 import { 
   Calendar, Users, DollarSign, BarChart3, TrendingUp, MapPin, 
   ArrowUpDown, Filter, Download, Eye, Star, Building2, Clock
@@ -339,7 +340,7 @@ export const HostedClassesAnalytics: React.FC<HostedClassesAnalyticsProps> = ({ 
         <CardContent className="p-0">
           <div className="overflow-auto max-h-[800px] border rounded-lg">
             <Table>
-              <TableHeader className="sticky top-0 bg-white z-10 border-b-2">
+              <TableHeader className={`sticky top-0 z-10 border-b-2 ${getTableHeaderClasses('retention')}`}>
                 <TableRow className="hover:bg-transparent">
                   <TableHead className="w-12"></TableHead>
                   <TableHead 

@@ -1,4 +1,4 @@
-import React, { memo, useCallback } from 'react';
+import React, { memo, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Footer } from '@/components/ui/footer';
 import { DashboardGrid } from '@/components/dashboard/DashboardGrid';
@@ -6,7 +6,7 @@ import { useGoogleSheets } from '@/hooks/useGoogleSheets';
 import { Card, CardContent } from '@/components/ui/card';
 import { AlertCircle, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { LoadingSkeleton } from '@/components/ui/LoadingSkeleton';
+import { useGlobalLoading } from '@/hooks/useGlobalLoading';
 import { designTokens } from '@/utils/designTokens';
 
 // Memoized stats card component
@@ -22,12 +22,17 @@ const StatsCard = memo(({
   </div>);
 const Index = () => {
   const navigate = useNavigate();
+  const { setLoading } = useGlobalLoading();
   const {
     data,
     loading,
     error,
     refetch
   } = useGoogleSheets();
+
+  useEffect(() => {
+    setLoading(loading, 'Loading dashboard overview...');
+  }, [loading, setLoading]);
   const handleSectionClick = useCallback((sectionId: string) => {
     if (sectionId === 'class-performance-series') {
       window.open('https://class-performance-series-001.vercel.app/', '_blank');
@@ -40,12 +45,9 @@ const Index = () => {
   const handleRetry = useCallback(() => {
     refetch();
   }, [refetch]);
+
   if (loading) {
-    return <div className="min-h-screen bg-white relative overflow-hidden">
-        <div className="container mx-auto px-8 py-8">
-          <LoadingSkeleton type="full-page" />
-        </div>
-      </div>;
+    return null; // Global loader will handle this
   }
   if (error) {
     return <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-gray-50 flex items-center justify-center p-4">

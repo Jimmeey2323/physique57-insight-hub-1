@@ -65,16 +65,7 @@ export const EnhancedClassAttendanceSection: React.FC = () => {
     });
   }, [filteredData, activeLocation]);
 
-  if (loading || payrollLoading) {
-    return (
-      <Card>
-        <CardContent className="p-8 text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-slate-600">Loading comprehensive class attendance analytics...</p>
-        </CardContent>
-      </Card>
-    );
-  }
+  // Remove individual loader - parent component handles loading via global loader
 
   if (error) {
     return (

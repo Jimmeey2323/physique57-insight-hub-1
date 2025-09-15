@@ -8,6 +8,7 @@ import { DataTable } from './DataTable';
 import { InteractiveChart } from './InteractiveChart';
 import { ThemeSelector } from './ThemeSelector';
 import { EnhancedSalesDrillDownModal } from './EnhancedSalesDrillDownModal';
+import { getActiveTabClasses } from '@/utils/colorThemes';
 import { EnhancedYearOnYearTable } from './EnhancedYearOnYearTable';
 import { MonthOnMonthTable } from './MonthOnMonthTable';
 import { ProductPerformanceTable } from './ProductPerformanceTable';

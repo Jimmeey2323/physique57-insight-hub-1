@@ -44,13 +44,14 @@ export const ModernDataTable: React.FC<ModernDataTableProps> = ({
   sortDirection,
   onRowClick
 }) => {
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center p-8">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-      </div>
-    );
-  }
+  // Remove individual loading state - parent components handle loading via global loader
+  // if (loading) {
+  //   return (
+  //     <div className="flex items-center justify-center p-8">
+  //       <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+  //     </div>
+  //   );
+  // }
 
   const formatCurrencyValue = (value: any) => {
     if (typeof value === 'string' && (value.includes('₹') || value.includes('$'))) {

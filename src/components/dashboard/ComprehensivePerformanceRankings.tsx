@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { getTableHeaderClasses } from '@/utils/colorThemes';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -179,7 +180,7 @@ export const ComprehensivePerformanceRankings: React.FC<ComprehensivePerformance
       <CardContent className="p-0">
         <div className="overflow-auto max-h-96 border rounded-lg">
           <Table>
-            <TableHeader className="sticky top-0 bg-white z-10">
+            <TableHeader className={`sticky top-0 z-10 ${getTableHeaderClasses('attendance')}`}>
               <TableRow className="hover:bg-transparent border-b-2">
                 <TableHead className="text-left font-bold whitespace-nowrap w-12">Rank</TableHead>
                 <TableHead className="text-left font-bold whitespace-nowrap min-w-48">Class Details</TableHead>
