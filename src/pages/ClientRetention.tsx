@@ -79,8 +79,24 @@ const ClientRetention = () => {
   const visitsSummary = useMemo(() => {
     if (!payrollData || payrollData.length === 0) return {};
     
+    // Filter payroll data by selected location
+    let filteredPayroll = payrollData;
+    if (selectedLocation !== 'All Locations') {
+      filteredPayroll = payrollData.filter(payroll => {
+        const payrollLocation = payroll.location || '';
+        
+        // For Kenkere House, use flexible matching
+        if (selectedLocation === 'Kenkere House, Bengaluru') {
+          return payrollLocation.toLowerCase().includes('kenkere') || payrollLocation.toLowerCase().includes('bengaluru');
+        }
+        
+        // For other locations, use exact match
+        return payrollLocation === selectedLocation;
+      });
+    }
+    
     const summary: Record<string, number> = {};
-    payrollData.forEach(payroll => {
+    filteredPayroll.forEach(payroll => {
       if (payroll.monthYear && payroll.totalCustomers) {
         // Use monthYear directly as key (should be in format like "Jan 2024")
         const key = payroll.monthYear;
@@ -88,8 +104,9 @@ const ClientRetention = () => {
       }
     });
     
+    console.log('Visits summary for location', selectedLocation, ':', summary);
     return summary;
-  }, [payrollData]);
+  }, [payrollData, selectedLocation]);
 
   // Get unique values for filters (only 3 main locations)
   const uniqueLocations = React.useMemo(() => {
@@ -233,6 +250,65 @@ const ClientRetention = () => {
       filtered = filtered.filter(client => (client.ltv || 0) <= filters.maxLTV!);
     }
     console.log('Filtered data:', filtered.length, 'records');
+    return filtered;
+  }, [data, selectedLocation, filters]);
+
+  // Special filtered data for month-on-month and year-on-year tables - ignores date range but applies location filter
+  const filteredDataNoDateRange = React.useMemo(() => {
+    console.log('Creating filtered data without date range for month/year tables');
+    let filtered = data;
+
+    // Apply location filter - check both firstVisitLocation and homeLocation
+    if (selectedLocation !== 'All Locations') {
+      const beforeLocationFilter = filtered.length;
+
+      filtered = filtered.filter(client => {
+        const firstLocation = client.firstVisitLocation || '';
+        const homeLocation = client.homeLocation || '';
+
+        // For Kenkere House, try more flexible matching
+        if (selectedLocation === 'Kenkere House, Bengaluru') {
+          const matchesFirst = firstLocation.toLowerCase().includes('kenkere') || firstLocation.toLowerCase().includes('bengaluru') || firstLocation === 'Kenkere House';
+          const matchesHome = homeLocation.toLowerCase().includes('kenkere') || homeLocation.toLowerCase().includes('bengaluru') || homeLocation === 'Kenkere House';
+          return matchesFirst || matchesHome;
+        }
+
+        // For other locations, use exact match
+        return firstLocation === selectedLocation || homeLocation === selectedLocation;
+      });
+      console.log(`Location filter for month/year tables ${selectedLocation}: ${beforeLocationFilter} -> ${filtered.length} records`);
+    }
+
+    // Apply additional filters (but NOT date range)
+    if (filters.location.length > 0) {
+      filtered = filtered.filter(client => filters.location.includes(client.firstVisitLocation || '') || filters.location.includes(client.homeLocation || ''));
+    }
+    if (filters.trainer.length > 0) {
+      filtered = filtered.filter(client => filters.trainer.includes(client.trainerName || ''));
+    }
+
+    // Apply other filters
+    if (filters.conversionStatus.length > 0) {
+      filtered = filtered.filter(client => filters.conversionStatus.includes(client.conversionStatus || ''));
+    }
+    if (filters.retentionStatus.length > 0) {
+      filtered = filtered.filter(client => filters.retentionStatus.includes(client.retentionStatus || ''));
+    }
+    if (filters.paymentMethod.length > 0) {
+      filtered = filtered.filter(client => filters.paymentMethod.includes(client.paymentMethod || ''));
+    }
+    if (filters.isNew.length > 0) {
+      filtered = filtered.filter(client => filters.isNew.includes(client.isNew || ''));
+    }
+
+    // Apply LTV filters
+    if (filters.minLTV !== undefined) {
+      filtered = filtered.filter(client => (client.ltv || 0) >= filters.minLTV!);
+    }
+    if (filters.maxLTV !== undefined) {
+      filtered = filtered.filter(client => (client.ltv || 0) <= filters.maxLTV!);
+    }
+    console.log('Filtered data without date range:', filtered.length, 'records');
     return filtered;
   }, [data, selectedLocation, filters]);
   const heroMetrics = useMemo(() => {
@@ -404,7 +480,7 @@ const ClientRetention = () => {
           })} />}
 
             {activeTable === 'monthonmonth' && <ClientConversionMonthOnMonthTable 
-              data={data} 
+              data={filteredDataNoDateRange} 
               visitsSummary={visitsSummary}
               onRowClick={rowData => setDrillDownModal({
             isOpen: true,
@@ -415,7 +491,7 @@ const ClientRetention = () => {
           })} />}
 
             {activeTable === 'yearonyear' && <ClientConversionYearOnYearTable 
-              data={data} 
+              data={filteredDataNoDateRange} 
               visitsSummary={visitsSummary}
               onRowClick={rowData => setDrillDownModal({
             isOpen: true,
