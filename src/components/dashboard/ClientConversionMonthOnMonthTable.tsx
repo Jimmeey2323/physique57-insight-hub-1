@@ -1,18 +1,6 @@
 
 import React from 'react';
-import { Card, Car      monthlyStats[monthKey] = {
-        month: monthName,
-        sortKey: monthKey,
-        totalMembers: 0,
-        visits: 0, // Will be populated from visitsSummary
-        newMembers: 0,
-        converted: 0,
-        retained: 0,
-        totalLTV: 0,
-        conversionIntervals: [],
-        visitsPostTrial: [],
-        clients: []
-      };rdHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Calendar, TrendingUp, TrendingDown } from 'lucide-react';
 import { formatCurrency, formatNumber } from '@/utils/formatters';
